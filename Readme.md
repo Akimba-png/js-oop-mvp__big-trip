@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
 * Студент: [Олег Акимов](https://up.htmlacademy.ru/ecmascript/14/user/1061909).
-* Наставник: `Неизвестно`.
+* Наставник: [Дмитрий Гуляев](https://htmlacademy.ru/profile/dima).
 
 ---
 
