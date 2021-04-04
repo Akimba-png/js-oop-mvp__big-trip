@@ -1,6 +1,6 @@
 import {createMainMenuTemplate} from './view/main-menu.js';
 import {createTripInfoTemplate} from './view/trip-info.js';
-import {tripCostTemplate} from './view/trip-cost.js';
+import {CreateTripCostTemplate} from './view/trip-cost.js';
 import {createFilterTemplate} from './view/filter.js';
 import {createTripBordTemplate} from './view/trip-bord.js';
 import {createNewPointTemplate} from './view/new-point.js';
@@ -22,7 +22,7 @@ const tripDetailsElement = siteBodyElement.querySelector('.trip-main');
 render(tripDetailsElement, createTripInfoTemplate(), 'afterbegin');
 
 const tripInfoElement = tripDetailsElement.querySelector('.trip-info');
-render(tripInfoElement, tripCostTemplate());
+render(tripInfoElement, CreateTripCostTemplate());
 
 const filterElement = siteBodyElement.querySelector('.trip-controls__filters');
 render(filterElement, createFilterTemplate());
