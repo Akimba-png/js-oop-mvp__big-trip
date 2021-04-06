@@ -6,8 +6,13 @@ import {createTripBordTemplate} from './view/trip-bord.js';
 import {createNewPointTemplate} from './view/new-point.js';
 import {createEditPointTemplate} from './view/edit-point.js';
 import {createPointTemplate} from './view/point.js';
+import {generatePointData} from './mock/point-data-generator.js';
 
-const POINT_COUNT = 3;
+const POINT_COUNT = 20;
+
+const randomPointsData = new Array(POINT_COUNT).fill(null).map(generatePointData);
+
+
 const siteBodyElement = document.querySelector('.page-body');
 
 const render = (container, template, position = 'beforeend') => {
@@ -35,5 +40,5 @@ render(eventListElement, createEditPointTemplate());
 render(eventListElement, createNewPointTemplate());
 
 for (let i = 0; i < POINT_COUNT; i++) {
-  render(eventListElement, createPointTemplate());
+  render(eventListElement, createPointTemplate(randomPointsData[i]));
 }
