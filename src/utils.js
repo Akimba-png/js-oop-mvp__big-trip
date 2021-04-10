@@ -44,15 +44,18 @@ const pickOffersDependOnType = (type, offers) => {
 
 const dateConverter = {
   'D MMM': (date) => dayjs(date).format('D MMM'),
-  'hh:mm': (date) => dayjs(date).format('hh:mm'),
+  'HH:mm': (date) => dayjs(date).format('HH:mm'),
   'YYYY-MM-DDTHH:mm': (date) => dayjs(date).format('YYYY-MM-DDTHH:mm'),
   'DD/MM/YY HH:mm': (date) => dayjs(date).format('DD/MM/YY HH:mm'),
 };
-const humanizeDate = (date, format = 'hh:mm') => dateConverter[format](date);
+const humanizeDate = (date, format = 'HH:mm') => dateConverter[format](date);
+
+
+const compareTwoDates = (dateA, dateB) => dayjs(dateA).diff(dateB);
 
 
 const getTimeDuration = (initialDate, expirationDate) => {
-  const difference = dayjs(expirationDate).diff(initialDate);
+  const difference = compareTwoDates(expirationDate, initialDate);
   const duration = dayjs.duration(difference).$d;
 
   const day = duration.days < DAYS_COUNT ? `0${duration.days}D` : `${duration.days}D`;
@@ -62,4 +65,14 @@ const getTimeDuration = (initialDate, expirationDate) => {
   return total;
 };
 
-export {getRandomInteger, getRandomArrayElement, generateRandomArray, pickOffersDependOnType, humanizeDate, getTimeDuration};
+const isDateExpired = (date) => dayjs().isAfter(date, 'm');
+const isDateInFuture = (date) => dayjs().isBefore(date, 'm');
+const isDateCurrent = (date) => dayjs().isSame(date, 'm');
+
+const isEventContinues = (dateFrom, dateTo) => {
+  return isDateExpired(dateFrom) && isDateInFuture(dateTo);
+};
+
+
+export {getRandomInteger, getRandomArrayElement, generateRandomArray, pickOffersDependOnType,
+  humanizeDate, getTimeDuration, isDateExpired, isDateInFuture, isDateCurrent, isEventContinues, compareTwoDates};
