@@ -4,7 +4,7 @@ const createFilterItemTemplate = (filterData) => {
   return filterData.map(({name, amount}) => {
     return `<div class="trip-filters__filter">
      <input id="filter-${name}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${amount}" checked>
-     <label class="trip-filters__filter-label" for="filter-everything">${name} ${amount}</label>
+     <label class="trip-filters__filter-label" for="filter-everything">${name} ${amount === 0 ? '' : amount}</label>
     </div>`;
   }).join('');
 };
