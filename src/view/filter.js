@@ -1,3 +1,5 @@
+import {createElement} from './../utils.js';
+
 const createFilterItemTemplate = (filterData) => {
   return filterData.map(({name, amount}) => {
     return `<div class="trip-filters__filter">
@@ -8,9 +10,32 @@ const createFilterItemTemplate = (filterData) => {
 };
 
 
-export const createFilterTemplate = (filterData) => {
+const createFilterTemplate = (filterData) => {
   return `<form class="trip-filters" action="#" method="get">
     ${createFilterItemTemplate(filterData)}
     <button class="visually-hidden" type="submit">Accept filter</button>
   </form>`;
 };
+
+
+export default class Filter {
+  constructor(filterData) {
+    this._filterData = filterData;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilterTemplate(this._filterData);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
