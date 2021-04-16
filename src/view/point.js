@@ -1,5 +1,5 @@
 import {DateFormat} from './../const.js';
-import {humanizeDate, getTimeDuration} from './../utils.js';
+import {humanizeDate, getTimeDuration, createElement} from './../utils.js';
 
 
 const createPointOfferTemplate = (offers) => {
@@ -13,7 +13,7 @@ const createPointOfferTemplate = (offers) => {
 };
 
 
-export const createPointTemplate = (pointData) => {
+const createPointTemplate = (pointData) => {
 
   const {type, destination, dateFrom, dateTo, basePrice, isFavorite, offers} = pointData;
 
@@ -55,3 +55,25 @@ export const createPointTemplate = (pointData) => {
     </div>
   </li>`;
 };
+
+export default class Point {
+  constructor(pointData) {
+    this._pointData = pointData;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createPointTemplate(this._pointData);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
