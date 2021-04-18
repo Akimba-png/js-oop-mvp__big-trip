@@ -99,6 +99,11 @@ const render = (container, element, position = RenderPosition.BEFOREEND) => {
 };
 
 
+const isEscEvent = (evt) => {
+  return evt.key === ('Escape' || 'Esc');
+};
+
+
 export {getRandomInteger, getRandomArrayElement, generateRandomArray, pickOffersDependOnType,
   humanizeDate, getTimeDuration, isDateExpired, isDateInFuture, isDateCurrent, isEventContinues, compareTwoDates,
-  render, RenderPosition, createElement};
+  render, RenderPosition, createElement, isEscEvent};
