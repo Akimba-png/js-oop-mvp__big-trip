@@ -1,4 +1,5 @@
-import {compareTwoDates, humanizeDate, createElement} from './../utils.js';
+import AbstractView from './abstract.js';
+import {compareTwoDates, humanizeDate} from './../utils.js';
 import {DateFormat} from './../const.js';
 
 const getTotalRoute = (pointData) => {
@@ -25,24 +26,13 @@ const createTripInfoTemplate = (pointData) => {
 };
 
 
-export default class TripInfo {
+export default class TripInfo extends AbstractView {
   constructor(pointData) {
+    super();
     this._pointData = pointData;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripInfoTemplate(this._pointData);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
