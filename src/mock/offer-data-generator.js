@@ -1,4 +1,4 @@
-import {generateRandomArray} from '../utils.js';
+import {generateRandomArray} from '../utils/common.js';
 
 const MAX_OFFERS_NUMBER = 5;
 

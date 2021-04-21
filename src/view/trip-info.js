@@ -1,5 +1,5 @@
 import AbstractView from './abstract.js';
-import {compareTwoDates, humanizeDate} from './../utils.js';
+import {compareTwoDates, humanizeDate} from '../utils/point.js';
 import {DateFormat} from './../const.js';
 
 const getTotalRoute = (pointData) => {

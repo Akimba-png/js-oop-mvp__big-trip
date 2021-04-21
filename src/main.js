@@ -10,7 +10,8 @@ import ListEmptyView from './view/list-empty.js';
 
 import {generatePointData} from './mock/point-data-generator.js';
 import {generateFilterData} from './mock/filter-data-generator.js';
-import {render, RenderPosition, isEscEvent} from './utils.js';
+import {render, replace, RenderPosition} from './utils/render.js';
+import {isEscEvent} from './utils/common.js';
 
 
 const POINT_COUNT = 20;
@@ -26,8 +27,8 @@ const randomPointsData = new Array(POINT_COUNT).fill(null).map(generatePointData
 const filterData = generateFilterData(randomPointsData);
 
 
-render(menuElement, new MainMenuView().getElement());
-render(filterElement, new FilterView(filterData).getElement());
+render(menuElement, new MainMenuView());
+render(filterElement, new FilterView(filterData));
 
 
 const renderPoint = (pointListElement, pointData) => {
@@ -42,40 +43,37 @@ const renderPoint = (pointListElement, pointData) => {
   };
 
   const changeViewToPoint = () => {
-    pointListElement.replaceChild(pointComponent.getElement(), pointEditorComponent.getElement());
+    replace(pointComponent, pointEditorComponent);
     document.removeEventListener('keydown', onEditorPointEscKeyDown);
 
   };
 
   const changeViewToEdit = () => {
-    pointListElement.replaceChild(pointEditorComponent.getElement(), pointComponent.getElement());
+    replace(pointEditorComponent, pointComponent);
     document.addEventListener('keydown', onEditorPointEscKeyDown);
 
   };
 
-  pointComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', changeViewToEdit);
-  pointEditorComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', changeViewToPoint);
-  pointEditorComponent.getElement().querySelector('.event--edit').addEventListener('submit', (evt) => {
-    evt.preventDefault();
-    changeViewToPoint();
-  });
+  pointComponent.setClickListener(changeViewToEdit);
+  pointEditorComponent.setClickListener(changeViewToPoint);
+  pointEditorComponent.setSubmitListener(changeViewToPoint);
 
-  render(pointListElement, pointComponent.getElement());
+  render(pointListElement, pointComponent);
 };
 
 
 const renderBoard = (pointData) => {
   if (pointData.length === 0) {
-    render(tripBoardElement, new ListEmptyView().getElement());
+    render(tripBoardElement, new ListEmptyView());
     return;
   }
 
   const tripInfoComponent = new TripInfoView(randomPointsData);
-  render(tripDetailsElement, tripInfoComponent.getElement(), RenderPosition.AFTERBEGIN);
-  render(tripInfoComponent.getElement(), new TripCostView(randomPointsData).getElement());
-  render(tripBoardElement, new TripSortView().getElement());
+  render(tripDetailsElement, tripInfoComponent, RenderPosition.AFTERBEGIN);
+  render(tripInfoComponent, new TripCostView(randomPointsData));
+  render(tripBoardElement, new TripSortView());
   const pointListComponent = new PointListView();
-  render(tripBoardElement, pointListComponent.getElement());
+  render(tripBoardElement, pointListComponent);
 
   for (let i = 0; i < POINT_COUNT; i++) {
     renderPoint(pointListComponent.getElement(), pointData[i]);
