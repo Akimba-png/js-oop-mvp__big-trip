@@ -1,4 +1,4 @@
-import {createElement} from './../utils.js';
+import AbstractView from './abstract.js';
 
 const getTotalCost = (pointData) => {
   let totalCost = 0;
@@ -14,24 +14,13 @@ const createTripCostTemplate = (pointData) => {
 };
 
 
-export default class TripCost {
+export default class TripCost extends AbstractView {
   constructor(pointData) {
+    super();
     this._pointData = pointData;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripCostTemplate(this._pointData);
-  }
-
-  getElement() {
-    if(!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

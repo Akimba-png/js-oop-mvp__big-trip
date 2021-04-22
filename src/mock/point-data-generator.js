@@ -1,5 +1,6 @@
 import {types, cites} from './../const.js';
-import {getRandomInteger, getRandomArrayElement, generateRandomArray, pickOffersDependOnType} from '../utils.js';
+import {getRandomInteger, getRandomArrayElement, generateRandomArray} from '../utils/common.js';
+import {pickOffersDependOnType} from '../utils/point.js';
 import {generateRandomOffers} from './offer-data-generator.js';
 import dayjs from 'dayjs';
 
