@@ -5,6 +5,7 @@ import PointListView from './../view/point-list.js';
 import TripSortView from './../view/trip-sort.js';
 import ListEmptyView from './../view/list-empty.js';
 import {render, RenderPosition} from './../utils/render.js';
+import {updatePoint} from './../utils/common.js';
 
 
 export default class Trip {
@@ -15,6 +16,11 @@ export default class Trip {
     this._tripSortComponent = new TripSortView();
     this._pointListComponent = new PointListView();
     this._listEmptyComponent = new ListEmptyView();
+
+    this._pointPresenter = {};
+
+    this._onPointChange = this._onPointChange.bind(this);
+    this._onPointModeChange = this._onPointModeChange.bind(this);
   }
 
 
@@ -26,7 +32,7 @@ export default class Trip {
 
 
   _renderTripSort() {
-    render(this._tripContainer, this._tripSortComponent);
+    render(this._tripContainer, this._tripSortComponent, RenderPosition.AFTERBEGIN);
   }
 
 
@@ -36,13 +42,31 @@ export default class Trip {
 
 
   _renderPoint(point) {
-    const pointPresenter = new PointPresenter(this._pointListComponent);
+    const pointPresenter = new PointPresenter(this._pointListComponent, this._onPointChange, this._onPointModeChange);
     pointPresenter.init(point);
+    this._pointPresenter[point.id] = pointPresenter;
+  }
+
+
+  _onPointChange(modifiedPoint) {
+    this._tripPoints = updatePoint(this._tripPoints, modifiedPoint);
+    this._pointPresenter[modifiedPoint.id].init(modifiedPoint);
   }
 
 
   _renderPoints() {
     this._tripPoints.slice().forEach((tripPoint) => this._renderPoint(tripPoint));
+  }
+
+
+  _clearAllPoints() {
+    Object.values(this._pointPresenter).forEach((pointPresenter) => pointPresenter.destroy());
+    this._pointPresenter = {};
+  }
+
+
+  _onPointModeChange() {
+    Object.values(this._pointPresenter).forEach((pointPresenter) => pointPresenter.resetView());
   }
 
 

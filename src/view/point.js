@@ -61,19 +61,29 @@ export default class Point extends AbstractView {
   constructor(pointData) {
     super();
     this._pointData = pointData;
-    this._onPointClick = this._onPointClick.bind(this);
+    this._onRollOutClick = this._onRollOutClick.bind(this);
+    this._onFavoriteClick = this._onFavoriteClick.bind(this);
   }
 
   getTemplate() {
     return createPointTemplate(this._pointData);
   }
 
-  _onPointClick() {
-    this._callback.pointClick();
+  _onRollOutClick() {
+    this._callback.rollOutClick();
   }
 
-  setClickListener(callback) {
-    this._callback.pointClick = callback;
-    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._onPointClick);
+  _onFavoriteClick() {
+    this._callback.favoriteClick();
+  }
+
+  setRollOutClickListener(callback) {
+    this._callback.rollOutClick = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._onRollOutClick);
+  }
+
+  setFavoriteClickListener(callback) {
+    this._callback.favoriteClick = callback;
+    this.getElement().querySelector('.event__favorite-btn ').addEventListener('click', this._onFavoriteClick);
   }
 }
