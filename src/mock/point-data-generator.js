@@ -3,6 +3,7 @@ import {getRandomInteger, getRandomArrayElement, generateRandomArray} from '../u
 import {pickOffersDependOnType} from '../utils/point.js';
 import {generateRandomOffers} from './offer-data-generator.js';
 import dayjs from 'dayjs';
+import {nanoid} from 'nanoid';
 
 const Gap = {
   MIN: 1,
@@ -70,6 +71,7 @@ const generatePointData = () => {
   const offers = generateRandomOffers(types);
   const dateInterval = generateDate();
   return {
+    id: nanoid(),
     type,
     offers: pickOffersDependOnType(type, offers),
     destination: generateDestination(cites, Gap),

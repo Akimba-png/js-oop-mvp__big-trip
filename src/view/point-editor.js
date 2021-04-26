@@ -132,7 +132,7 @@ export default class PointEditor extends AbstractView {
   constructor(pointData = EMPTY_POINT) {
     super();
     this._pointData = pointData;
-    this._onPointEditorClick = this._onPointEditorClick.bind(this);
+    this._onRollUpClick = this._onRollUpClick.bind(this);
     this._onPointEditorSubmit = this._onPointEditorSubmit.bind(this);
   }
 
@@ -140,8 +140,8 @@ export default class PointEditor extends AbstractView {
     return createPointEditorTemplate(this._pointData);
   }
 
-  _onPointEditorClick() {
-    this._callback.pointEditorClick();
+  _onRollUpClick() {
+    this._callback.rollUpClick();
   }
 
   _onPointEditorSubmit(evt) {
@@ -149,9 +149,9 @@ export default class PointEditor extends AbstractView {
     this._callback.pointEditorSubmit();
   }
 
-  setClickListener(callback) {
-    this._callback.pointEditorClick = callback;
-    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._onPointEditorClick);
+  setRollUpClickListener(callback) {
+    this._callback.rollUpClick = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._onRollUpClick);
   }
 
   setSubmitListener(callback) {
