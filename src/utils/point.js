@@ -26,7 +26,12 @@ const dateConverter = {
 export const humanizeDate = (date, format = 'HH:mm') => dateConverter[format](date);
 
 
-export const compareTwoDates = (dateA, dateB) => dayjs(dateA).diff(dateB);
+export const compareTwoDates = (dateA, dateB) => {
+  if (dateA === null || dateB === null) {
+    return null;
+  }
+  return dayjs(dateA).diff(dateB);
+};
 
 
 export const getTimeDuration = (initialDate, expirationDate) => {
@@ -48,4 +53,46 @@ export const isDateCurrent = (date) => dayjs().isSame(date, 'm');
 
 export const isEventContinues = (dateFrom, dateTo) => {
   return isDateExpired(dateFrom) && isDateInFuture(dateTo);
+};
+
+
+const getSortWeightForEmptyValue = (valueA, valueB) => {
+  if (valueA === null) {
+    return 1;
+  }
+
+  if (valueB === null) {
+    return -1;
+  }
+
+  if (valueA === null && valueB === null) {
+    return 0;
+  }
+
+  return null;
+};
+
+
+export const sortByPrice = (pointA, pointB) => {
+  const sortWeightForEmptyValue = getSortWeightForEmptyValue(pointA.basePrice, pointB.basePrice);
+
+  if (sortWeightForEmptyValue !== null) {
+    return sortWeightForEmptyValue;
+  }
+
+  return pointB.basePrice - pointA.basePrice;
+};
+
+
+export const sortByTime = (pointA, pointB) => {
+  const durationPointA = compareTwoDates(pointA.dateTo, pointA.dateFrom);
+  const durationPointB = compareTwoDates(pointB.dateTo, pointB.dateFrom);
+
+  const sortWeightForEmptyValue = getSortWeightForEmptyValue(durationPointA, durationPointB);
+
+  if (sortWeightForEmptyValue !== null) {
+    return sortWeightForEmptyValue;
+  }
+
+  return durationPointB - durationPointA;
 };

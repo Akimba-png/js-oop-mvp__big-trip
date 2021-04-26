@@ -8,4 +8,10 @@ const DateFormat = {
   DATE_HOUR: 'DD/MM/YY HH:mm',
 };
 
-export {types, cites, DateFormat};
+const SortType = {
+  DAY: 'day',
+  TIME: 'time',
+  PRICE: 'price',
+};
+
+export {types, cites, DateFormat, SortType};
