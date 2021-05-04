@@ -1,5 +1,5 @@
 const types = ['taxi', 'bus', 'train', 'ship', 'transport', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
-const cites = ['Cartagena', 'Santiago', 'Tortuga', 'Jamaica', 'Barbados', 'Havana'];
+const cities = ['Cartagena', 'Santiago', 'Tortuga', 'Jamaica', 'Barbados', 'Havana'];
 
 const DateFormat = {
   DAY_MONTH: 'D MMM',
@@ -14,4 +14,4 @@ const SortType = {
   PRICE: 'price',
 };
 
-export {types, cites, DateFormat, SortType};
+export {types, cities, DateFormat, SortType};

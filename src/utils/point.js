@@ -12,8 +12,11 @@ const TimeFormat = {
 };
 
 
-export const pickOffersDependOnType = (type, offers) => {
-  return offers.find((item) => item.type === type).offers;
+export const pickElementDependOnValue = (value, elements, descriptionFlag) => {
+  if (descriptionFlag) {
+    return elements.find((element) => element.name === value);
+  }
+  return elements.find((element) => element.type === value).offers;
 };
 
 

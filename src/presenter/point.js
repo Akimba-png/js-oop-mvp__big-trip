@@ -22,6 +22,7 @@ export default class Point {
     this._changeViewToPoint = this._changeViewToPoint.bind(this);
     this._changeViewToEdit = this._changeViewToEdit.bind(this);
     this._onEditorPointEscKeydown = this._onEditorPointEscKeydown.bind(this);
+    this._onFormSubmit = this._onFormSubmit.bind(this);
     this._changeFavoriteStatus = this._changeFavoriteStatus.bind(this);
   }
 
@@ -38,7 +39,7 @@ export default class Point {
     this._pointComponent.setRollOutClickListener(this._changeViewToEdit);
     this._pointComponent.setFavoriteClickListener(this._changeFavoriteStatus);
     this._pointEditorComponent.setRollUpClickListener(this._changeViewToPoint);
-    this._pointEditorComponent.setSubmitListener(this._changeViewToPoint);
+    this._pointEditorComponent.setSubmitListener(this._onFormSubmit);
 
 
     if (previousPointComponent === null || previousPointEditorComponent === null) {
@@ -84,6 +85,7 @@ export default class Point {
 
 
   _changeViewToPoint() {
+    this._pointEditorComponent.resetInput(this._point);
     replace(this._pointComponent, this._pointEditorComponent);
     document.removeEventListener('keydown', this._onEditorPointEscKeydown);
     this._pointMode = Mode.POINT;
@@ -95,6 +97,12 @@ export default class Point {
     document.addEventListener('keydown', this._onEditorPointEscKeydown);
     this._changeMode();
     this._pointMode = Mode.EDITOR;
+  }
+
+
+  _onFormSubmit(point) {
+    this._changeViewToPoint();
+    this._changeData(point);
   }
 
 

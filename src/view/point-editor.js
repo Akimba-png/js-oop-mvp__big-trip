@@ -1,15 +1,16 @@
-import AbstractView from './abstract.js';
+import SmartView from './smart.js';
 import dayjs from 'dayjs';
-import {types, cites, DateFormat} from '../const.js';
+import {types, cities, DateFormat} from '../const.js';
 import {getRandomInteger, getRandomArrayElement} from '../utils/common.js';
-import {humanizeDate} from '../utils/point.js';
+import {humanizeDate, pickElementDependOnValue} from '../utils/point.js';
+import {generatedOffers, generatedDescriptions} from './../mock/point-data-generator.js';
 
 
 const EMPTY_POINT = {
   type: getRandomArrayElement(types),
   offers: [],
   destination: {
-    name: getRandomArrayElement(cites),
+    name: getRandomArrayElement(cities),
     description: '',
     pictures: '',
   },
@@ -17,6 +18,8 @@ const EMPTY_POINT = {
   dateTo: dayjs(),
   basePrice: '',
 };
+
+const TRUE_FLAG = true;
 
 
 const createEventTypeItemTemplate = (availableTypes, currentType = '') => {
@@ -28,8 +31,8 @@ const createEventTypeItemTemplate = (availableTypes, currentType = '') => {
 };
 
 
-const createDestinationOptionTemplate = (cites) => {
-  return cites.map((city) => `<option value="${city}"></option>`).join('');
+const createDestinationOptionTemplate = (cities) => {
+  return cities.map((city) => `<option value="${city}"></option>`).join('');
 };
 
 
@@ -64,6 +67,15 @@ const createPhotoContainer = (destination) => {
 };
 
 
+const createEventDestinationTemplate = (destination) => {
+  return destination.description.length > 0 || destination.pictures.length > 0? `<section class="event__section  event__section--destination">
+  <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+  <p class="event__destination-description">${destination.description}</p>
+  ${createPhotoContainer(destination)}
+</section>` : '';
+};
+
+
 const createPointEditorTemplate = (pointData) => {
   const {type, dateFrom, dateTo, basePrice, offers, destination} = pointData;
   return `<li class="trip-events__item">
@@ -90,7 +102,7 @@ const createPointEditorTemplate = (pointData) => {
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
           <datalist id="destination-list-1">
-            ${createDestinationOptionTemplate(cites)}
+            ${createDestinationOptionTemplate(cities)}
           </datalist>
         </div>
 
@@ -118,44 +130,107 @@ const createPointEditorTemplate = (pointData) => {
       </header>
       <section class="event__details">
         ${createEventOfferTemplate(offers)}
-        <section class="event__section  event__section--destination">
-          <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${destination.description}</p>
-          ${createPhotoContainer(destination)}
-        </section>
+        ${createEventDestinationTemplate(destination)}
       </section>
     </form>
   </li>`;
 };
 
-export default class PointEditor extends AbstractView {
+
+export default class PointEditor extends SmartView {
   constructor(pointData = EMPTY_POINT) {
     super();
-    this._pointData = pointData;
+    this._pointState = PointEditor.parsePointDataToState(pointData);
     this._onRollUpClick = this._onRollUpClick.bind(this);
     this._onPointEditorSubmit = this._onPointEditorSubmit.bind(this);
+    this._onPointTypeChange = this._onPointTypeChange.bind(this);
+    this._onPointInput = this._onPointInput.bind(this);
+    this._setInnerListeners();
   }
+
+
+  static parsePointDataToState(pointData) {
+    return Object.assign(
+      {},
+      pointData,
+    );
+  }
+
+
+  static parseStateToPointData(state) {
+    state = Object.assign(
+      {},
+      state,
+    );
+    return state;
+  }
+
 
   getTemplate() {
-    return createPointEditorTemplate(this._pointData);
+    return createPointEditorTemplate(this._pointState);
   }
 
-  _onRollUpClick() {
-    this._callback.rollUpClick();
+
+  resetInput(pointData) {
+    this.updateData(PointEditor.parsePointDataToState(pointData));
   }
 
-  _onPointEditorSubmit(evt) {
-    evt.preventDefault();
-    this._callback.pointEditorSubmit();
-  }
 
   setRollUpClickListener(callback) {
     this._callback.rollUpClick = callback;
     this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._onRollUpClick);
   }
 
+
   setSubmitListener(callback) {
     this._callback.pointEditorSubmit = callback;
     this.getElement().querySelector('.event--edit').addEventListener('submit', this._onPointEditorSubmit);
+  }
+
+
+  restoreListeners() {
+    this._setInnerListeners();
+    this.setRollUpClickListener(this._callback.rollUpClick);
+    this.setSubmitListener(this._callback.pointEditorSubmit);
+  }
+
+
+  _setInnerListeners() {
+    this.getElement().querySelector('.event__type-group').addEventListener('change', this._onPointTypeChange);
+    this.getElement().querySelector('.event__input--destination').addEventListener('change', this._onPointInput);
+  }
+
+
+  _onRollUpClick() {
+    this._callback.rollUpClick();
+  }
+
+
+  _onPointEditorSubmit(evt) {
+    evt.preventDefault();
+    this._callback.pointEditorSubmit(PointEditor.parseStateToPointData(this._pointState));
+  }
+
+
+  _onPointTypeChange(evt) {
+    evt.preventDefault();
+    if (evt.target.tagName !== 'INPUT') {
+      return;
+    }
+    this.updateData({
+      type: evt.target.value,
+      offers: pickElementDependOnValue(evt.target.value, generatedOffers),
+    });
+  }
+
+
+  _onPointInput(evt) {
+    if (!cities.includes(evt.target.value)) {
+      return;
+    }
+    evt.preventDefault();
+    this.updateData({
+      destination: pickElementDependOnValue(evt.target.value, generatedDescriptions, TRUE_FLAG),
+    });
   }
 }
