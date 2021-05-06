@@ -1,8 +1,10 @@
 import SmartView from './smart.js';
 import dayjs from 'dayjs';
+import flatpickr from 'flatpickr';
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import {types, cities, DateFormat} from '../const.js';
 import {getRandomInteger, getRandomArrayElement} from '../utils/common.js';
-import {humanizeDate, pickElementDependOnValue} from '../utils/point.js';
+import {humanizeDate, pickElementDependOnValue, compareTwoDates} from '../utils/point.js';
 import {generatedOffers, generatedDescriptions} from './../mock/point-data-generator.js';
 
 
@@ -141,11 +143,18 @@ export default class PointEditor extends SmartView {
   constructor(pointData = EMPTY_POINT) {
     super();
     this._pointState = PointEditor.parsePointDataToState(pointData);
+    this._datePickerStartDate = null;
+    this._datePickerExpirationDate = null;
+
     this._onRollUpClick = this._onRollUpClick.bind(this);
     this._onPointEditorSubmit = this._onPointEditorSubmit.bind(this);
     this._onPointTypeChange = this._onPointTypeChange.bind(this);
     this._onPointInput = this._onPointInput.bind(this);
+    this._onDateFromChange = this._onDateFromChange.bind(this);
+    this._onDateToChange = this._onDateToChange.bind(this);
     this._setInnerListeners();
+    this._setDatePicker(this._datePickerStartDate, TRUE_FLAG);
+    this._setDatePicker(this._datePickerExpirationDate);
   }
 
 
@@ -192,6 +201,8 @@ export default class PointEditor extends SmartView {
     this._setInnerListeners();
     this.setRollUpClickListener(this._callback.rollUpClick);
     this.setSubmitListener(this._callback.pointEditorSubmit);
+    this._setDatePicker(this._datePickerStartDate, TRUE_FLAG);
+    this._setDatePicker(this._datePickerExpirationDate);
   }
 
 
@@ -226,11 +237,68 @@ export default class PointEditor extends SmartView {
 
   _onPointInput(evt) {
     if (!cities.includes(evt.target.value)) {
+      evt.target.setCustomValidity('Необходимо выбрать одно из предложенных направлений');
+    }
+    else {
+      evt.target.setCustomValidity('');
+      evt.preventDefault();
+      this.updateData({
+        destination: pickElementDependOnValue(evt.target.value, generatedDescriptions, TRUE_FLAG),
+      });
+    }
+    evt.target.reportValidity();
+  }
+
+
+  _setDatePicker(datePicker, flag) {
+    if (datePicker) {
+      datePicker.destroy();
+      datePicker = null;
+    }
+
+    if (flag) {
+      datePicker = flatpickr(
+        this.getElement().querySelector('#event-start-time-1'),
+        {
+          dateFormat: 'd/m/y H:i',
+          defaultDate: this._pointState.dateFrom,
+          onChange: this._onDateFromChange,
+        },
+      );
       return;
     }
-    evt.preventDefault();
+
+    datePicker = flatpickr(
+      this.getElement().querySelector('#event-end-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._pointState.dateTo,
+        onChange: this._onDateToChange,
+      },
+    );
+  }
+
+
+  _onDateFromChange(userInput) {
+    if (compareTwoDates(this._pointState.dateTo, userInput) < 0) {
+      this.updateData({
+        dateFrom: userInput,
+        dateTo: userInput,
+      });
+      return;
+    }
     this.updateData({
-      destination: pickElementDependOnValue(evt.target.value, generatedDescriptions, TRUE_FLAG),
+      dateFrom: userInput,
+    });
+  }
+
+
+  _onDateToChange(userInput) {
+    if (compareTwoDates(userInput, this._pointState.dateFrom) < 0) {
+      userInput = this._pointState.dateFrom;
+    }
+    this.updateData({
+      dateTo: userInput,
     });
   }
 }
