@@ -2,7 +2,7 @@ import SmartView from './smart.js';
 import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
-import {types, cities, DateFormat} from '../const.js';
+import {types, cities, DateFormat, TRUE_FLAG} from '../const.js';
 import {getRandomInteger, getRandomArrayElement} from '../utils/common.js';
 import {humanizeDate, pickElementDependOnValue, compareTwoDates} from '../utils/point.js';
 import {generatedOffers, generatedDescriptions} from './../mock/point-data-generator.js';
@@ -16,12 +16,10 @@ const EMPTY_POINT = {
     description: '',
     pictures: '',
   },
-  dateFrom: dayjs(),
-  dateTo: dayjs(),
+  dateFrom: dayjs().toDate(),
+  dateTo: dayjs().toDate(),
   basePrice: '',
 };
-
-const TRUE_FLAG = true;
 
 
 const createEventTypeItemTemplate = (availableTypes, currentType = '') => {
@@ -148,10 +146,13 @@ export default class PointEditor extends SmartView {
 
     this._onRollUpClick = this._onRollUpClick.bind(this);
     this._onPointEditorSubmit = this._onPointEditorSubmit.bind(this);
+    this._onPointEditorDelete = this._onPointEditorDelete.bind(this);
     this._onPointTypeChange = this._onPointTypeChange.bind(this);
     this._onPointInput = this._onPointInput.bind(this);
     this._onDateFromChange = this._onDateFromChange.bind(this);
     this._onDateToChange = this._onDateToChange.bind(this);
+    this._onPriceChange = this._onPriceChange.bind(this);
+
     this._setInnerListeners();
     this._setDatePicker(this._datePickerStartDate, TRUE_FLAG);
     this._setDatePicker(this._datePickerExpirationDate);
@@ -180,6 +181,17 @@ export default class PointEditor extends SmartView {
   }
 
 
+  removeElement() {
+    super.removeElement();
+    if (this._datePickerStartDate || this._datePickerExpirationDate) {
+      this._datePickerStartDate.destroy();
+      this._datePickerStartDate = null;
+      this._datePickerExpirationDate.destroy();
+      this._datePickerExpirationDate = null;
+    }
+  }
+
+
   resetInput(pointData) {
     this.updateData(PointEditor.parsePointDataToState(pointData));
   }
@@ -197,10 +209,17 @@ export default class PointEditor extends SmartView {
   }
 
 
+  setDeleteListener(callback) {
+    this._callback.pointEditorDelete = callback;
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._onPointEditorDelete);
+  }
+
+
   restoreListeners() {
     this._setInnerListeners();
     this.setRollUpClickListener(this._callback.rollUpClick);
     this.setSubmitListener(this._callback.pointEditorSubmit);
+    this.setDeleteListener(this._callback.pointEditorDelete);
     this._setDatePicker(this._datePickerStartDate, TRUE_FLAG);
     this._setDatePicker(this._datePickerExpirationDate);
   }
@@ -209,6 +228,7 @@ export default class PointEditor extends SmartView {
   _setInnerListeners() {
     this.getElement().querySelector('.event__type-group').addEventListener('change', this._onPointTypeChange);
     this.getElement().querySelector('.event__input--destination').addEventListener('change', this._onPointInput);
+    this.getElement().querySelector('.event__input--price').addEventListener('change', this._onPriceChange);
   }
 
 
@@ -220,6 +240,12 @@ export default class PointEditor extends SmartView {
   _onPointEditorSubmit(evt) {
     evt.preventDefault();
     this._callback.pointEditorSubmit(PointEditor.parseStateToPointData(this._pointState));
+  }
+
+
+  _onPointEditorDelete(evt) {
+    evt.preventDefault();
+    this._callback.pointEditorDelete(PointEditor.parseStateToPointData(this._pointState));
   }
 
 
@@ -300,5 +326,21 @@ export default class PointEditor extends SmartView {
     this.updateData({
       dateTo: userInput,
     });
+  }
+
+
+  _onPriceChange(evt) {
+    evt.preventDefault();
+    if (!/^\d+$/.test(evt.target.value) || evt.target.value < 1) {
+      evt.target.setCustomValidity('Не отдохнуть:(');
+    } else {
+      evt.target.setCustomValidity('');
+      this.updateData({
+        basePrice: evt.target.value,
+      },
+      TRUE_FLAG,
+      );
+    }
+    evt.target.reportValidity();
   }
 }

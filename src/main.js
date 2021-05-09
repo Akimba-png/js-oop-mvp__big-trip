@@ -1,8 +1,9 @@
 import TripPresenter from './presenter/trip.js';
+import FilterPresenter from './presenter/filter.js';
 import MainMenuView from './view/main-menu.js';
-import FilterView from './view/filter.js';
+import PointsModel from './model/points.js';
+import FilterModel from './model/filter.js';
 import {generatePointData} from './mock/point-data-generator.js';
-import {generateFilterData} from './mock/filter-data-generator.js';
 import {render} from './utils/render.js';
 
 
@@ -16,12 +17,23 @@ const tripBoardElement = siteBodyElement.querySelector('.trip-events');
 
 
 const randomPointsData = new Array(POINT_COUNT).fill(null).map(generatePointData);
-const filterData = generateFilterData(randomPointsData);
 
+
+const pointsModel = new PointsModel();
+pointsModel.setPoints(randomPointsData);
+
+const filterModel = new FilterModel();
 
 render(menuElement, new MainMenuView());
-render(filterElement, new FilterView(filterData));
+
+const tripPresenter = new TripPresenter(tripBoardElement, tripDetailsElement, pointsModel, filterModel);
+tripPresenter.init();
 
 
-const tripPresenter = new TripPresenter(tripBoardElement, tripDetailsElement);
-tripPresenter.init(randomPointsData);
+const filterPresenter = new FilterPresenter(filterElement, filterModel, pointsModel);
+filterPresenter.init();
+
+document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+  evt.preventDefault();
+  tripPresenter.createPoint();
+});

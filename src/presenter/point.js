@@ -2,6 +2,8 @@ import PointView from './../view/point.js';
 import PointEditorView from './../view/point-editor.js';
 import {render, replace, remove} from './../utils/render.js';
 import {isEscEvent} from './../utils/common.js';
+import {isDateTheSame} from './../utils/point.js';
+import {UserAction, UpdateType} from './../const.js';
 
 const Mode = {
   POINT: 'point',
@@ -23,6 +25,7 @@ export default class Point {
     this._changeViewToEdit = this._changeViewToEdit.bind(this);
     this._onEditorPointEscKeydown = this._onEditorPointEscKeydown.bind(this);
     this._onFormSubmit = this._onFormSubmit.bind(this);
+    this._onFormDelete = this._onFormDelete.bind(this);
     this._changeFavoriteStatus = this._changeFavoriteStatus.bind(this);
   }
 
@@ -40,6 +43,7 @@ export default class Point {
     this._pointComponent.setFavoriteClickListener(this._changeFavoriteStatus);
     this._pointEditorComponent.setRollUpClickListener(this._changeViewToPoint);
     this._pointEditorComponent.setSubmitListener(this._onFormSubmit);
+    this._pointEditorComponent.setDeleteListener(this._onFormDelete);
 
 
     if (previousPointComponent === null || previousPointEditorComponent === null) {
@@ -102,12 +106,32 @@ export default class Point {
 
   _onFormSubmit(point) {
     this._changeViewToPoint();
-    this._changeData(point);
+
+    const isMinorUpdate = (!isDateTheSame(this._point.dateFrom, point.dateFrom) ||
+    !isDateTheSame(this._point.dateTo, point.dateTo) ||
+    !(this._point.basePrice === point.basePrice));
+
+    this._changeData(
+      UserAction.UPDATE_POINT,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      point,
+    );
+  }
+
+
+  _onFormDelete(point) {
+    this._changeData(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
   }
 
 
   _changeFavoriteStatus() {
     this._changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.PATCH,
       Object.assign({}, this._point, {isFavorite: !this._point.isFavorite}),
     );
   }
