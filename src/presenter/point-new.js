@@ -6,9 +6,10 @@ import {nanoid} from 'nanoid';
 
 
 export default class PointNew {
-  constructor(pointListContainer, changeData) {
+  constructor(pointListContainer, changeData, offers) {
     this._pointListContainer = pointListContainer;
     this._changeData = changeData;
+    this._offers = offers;
 
     this._pointEditorComponent = null;
 
@@ -22,7 +23,7 @@ export default class PointNew {
     if (this._pointEditorComponent !== null) {
       return;
     }
-    this._pointEditorComponent = new PointEditorView();
+    this._pointEditorComponent = new PointEditorView(this._offers);
 
     this._pointEditorComponent.setSubmitListener(this._onFormSubmit);
     this._pointEditorComponent.setDeleteListener(this._onFormDelete);

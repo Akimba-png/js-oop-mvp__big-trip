@@ -12,7 +12,7 @@ import {filter} from './../utils/filter.js';
 
 
 export default class Trip {
-  constructor(tripContainer, tripDetailsContainer, pointsModel, filterModel) {
+  constructor(tripContainer, tripDetailsContainer, pointsModel, filterModel, offersModel) {
     this._tripContainer = tripContainer;
     this._tripDetailsContainer = tripDetailsContainer;
 
@@ -21,8 +21,10 @@ export default class Trip {
     this._listEmptyComponent = new ListEmptyView();
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
+    this._offersModel = offersModel;
 
     this._pointPresenter = {};
+    this._offers = [];
     this._currentSortType = SortType.DATE;
 
     this._onViewAction = this._onViewAction.bind(this);
@@ -32,7 +34,7 @@ export default class Trip {
     this._pointsModel.addObserver(this._onModelEvent);
     this._filterModel.addObserver(this._onModelEvent);
 
-    this._pointNewPresenter = new PointNewPresenter(this._pointListComponent, this._onViewAction);
+    this._pointNewPresenter = new PointNewPresenter(this._pointListComponent, this._onViewAction, this._offers);
   }
 
 
@@ -46,6 +48,11 @@ export default class Trip {
     this._currentSortType = SortType.DATE;
     this._filterModel.setActiveFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this._pointNewPresenter.init();
+  }
+
+
+  _getOffers() {
+    this._offers = this._offersModel.getOffers();
   }
 
 
@@ -128,7 +135,7 @@ export default class Trip {
 
 
   _renderPoint(point) {
-    const pointPresenter = new PointPresenter(this._pointListComponent, this._onViewAction, this._onPointModeChange);
+    const pointPresenter = new PointPresenter(this._pointListComponent, this._onViewAction, this._onPointModeChange, this._offers);
     pointPresenter.init(point);
     this._pointPresenter[point.id] = pointPresenter;
   }
@@ -148,6 +155,7 @@ export default class Trip {
     this._pointNewPresenter.destroy();
     Object.values(this._pointPresenter).forEach((pointPresenter) => pointPresenter.destroy());
     this._pointPresenter = {};
+    this._offers =[];
     remove(this._tripSortComponent);
     remove(this._listEmptyComponent);
 
@@ -172,6 +180,8 @@ export default class Trip {
 
 
   _renderBoard() {
+    this._getOffers();
+    // console.log(this._getOffers())
     const points = this._getPoints();
     if (points.length === 0) {
       this._renderListEmpty();

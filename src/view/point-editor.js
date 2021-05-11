@@ -36,16 +36,17 @@ const createDestinationOptionTemplate = (cities) => {
 };
 
 
-const createEventOfferTemplate = (offers) => {
-  return offers.length > 0 ?
+const createEventOfferTemplate = (type, offers, allTypeOffers) => {
+  const availableOffers = pickElementDependOnValue(type, allTypeOffers);
+  return availableOffers.length > 0 ?
     `<section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
     <div class="event__available-offers">
-    ${offers.map(({title, price}) => {
+    ${availableOffers.map(({title, price}) => {
     const offerClassName = title.split(' ').pop();
-    const checkedAttribute = getRandomInteger() ? 'checked' : '';
+    const checkedAttribute = offers.some((offer) => offer.title === title) ? 'checked' : '';
     return `<div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerClassName}-1" type="checkbox" name="event-offer-${offerClassName}" ${checkedAttribute}>
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerClassName}-1" type="checkbox" name="event-offer-${offerClassName}" value="${title}" ${checkedAttribute}>
     <label class="event__offer-label" for="event-offer-${offerClassName}-1">
     <span class="event__offer-title">${title}</span>
     &plus;&euro;&nbsp;
@@ -76,8 +77,12 @@ const createEventDestinationTemplate = (destination) => {
 };
 
 
-const createPointEditorTemplate = (pointData) => {
+const createPointEditorTemplate = (pointData, allTypeOffers) => {
   const {type, dateFrom, dateTo, basePrice, offers, destination} = pointData;
+  console.log(pointData)
+  console.log(offers)
+  console.log(allTypeOffers)
+
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
       <header class="event__header">
@@ -129,7 +134,7 @@ const createPointEditorTemplate = (pointData) => {
         </button>
       </header>
       <section class="event__details">
-        ${createEventOfferTemplate(offers)}
+        ${createEventOfferTemplate(type, offers, allTypeOffers)}
         ${createEventDestinationTemplate(destination)}
       </section>
     </form>
@@ -138,9 +143,10 @@ const createPointEditorTemplate = (pointData) => {
 
 
 export default class PointEditor extends SmartView {
-  constructor(pointData = EMPTY_POINT) {
+  constructor(pointData = EMPTY_POINT, offers) {
     super();
     this._pointState = PointEditor.parsePointDataToState(pointData);
+    this._offers = offers;
     this._datePickerStartDate = null;
     this._datePickerExpirationDate = null;
 
@@ -152,6 +158,7 @@ export default class PointEditor extends SmartView {
     this._onDateFromChange = this._onDateFromChange.bind(this);
     this._onDateToChange = this._onDateToChange.bind(this);
     this._onPriceChange = this._onPriceChange.bind(this);
+    this._onOfferChange = this._onOfferChange.bind(this);
 
     this._setInnerListeners();
     this._setDatePicker(this._datePickerStartDate, TRUE_FLAG);
@@ -160,6 +167,19 @@ export default class PointEditor extends SmartView {
 
 
   static parsePointDataToState(pointData) {
+    // console.log(pointData)
+    // console.log(pointData.type)
+    // console.log(allTypeOffers)
+    // const availableOffers = pickElementDependOnValue(pointData.type, allTypeOffers);
+    // console.log(availableOffers)
+    // console.log(pointData.offers)
+    // availableOffers.forEach((availableOffer) => {
+    //   if (pointData.offers.some((offer) => offer.title === availableOffer.title)) {
+    //     pointData.offers.isChecked = true;
+    //     return;
+    //   }
+    // })
+
     return Object.assign(
       {},
       pointData,
@@ -177,7 +197,7 @@ export default class PointEditor extends SmartView {
 
 
   getTemplate() {
-    return createPointEditorTemplate(this._pointState);
+    return createPointEditorTemplate(this._pointState, this._offers);
   }
 
 
@@ -229,6 +249,7 @@ export default class PointEditor extends SmartView {
     this.getElement().querySelector('.event__type-group').addEventListener('change', this._onPointTypeChange);
     this.getElement().querySelector('.event__input--destination').addEventListener('change', this._onPointInput);
     this.getElement().querySelector('.event__input--price').addEventListener('change', this._onPriceChange);
+    this.getElement().querySelector('.event__available-offers').addEventListener('change', this._onOfferChange)
   }
 
 
@@ -343,4 +364,54 @@ export default class PointEditor extends SmartView {
     }
     evt.target.reportValidity();
   }
+
+
+  _onOfferChange(evt) {
+    evt.preventDefault();
+    if (evt.target.tagName !== 'INPUT') {
+      return;
+    }
+    // console.log(this._pointState)
+
+    // if (this._pointState.offers.some((offer) => offer.title === evt.target.value)) {
+    //   // const index = this._pointState.offers.findIndex((offer) => offer.title === evt.target.value);
+    //   // console.log(index)
+
+
+    // }
+    console.log(this._offers)
+    const index = this._pointState.offers.findIndex((offer) => offer.title === evt.target.value);
+    if (index < 0) {
+      const testArray = pickElementDependOnValue(this._pointState.type, this._offers)
+
+      const newOffer = testArray.find((offer) => offer.title === evt.target.value)
+      this.updateData({
+        offers: [newOffer, ...this._pointState.offers]
+      },
+      TRUE_FLAG,
+      );
+    } else {
+      // this._pointState.offers.splice(index, 1);
+      this.updateData({
+        offers: [...this._pointState.offers.slice(0, index), ...this._pointState.offers.slice(index + 1)]
+      },
+      TRUE_FLAG,
+      );
+    }
+
+    // console.log(index)
+
+    // console.log(this._pointState.offers)
+    // console.log(evt.target.value)
+    // this._pointState
+    // evt.target.value
+
+  }
 }
+
+
+ // Либо метод из демки:
+    // this._points = [
+    //   ...this._points.slice(0, index),
+    //   ...this._points.slice(index + 1)
+    // ];

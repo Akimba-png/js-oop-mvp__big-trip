@@ -4,6 +4,8 @@ import {render, replace, remove} from './../utils/render.js';
 import {isEscEvent} from './../utils/common.js';
 import {isDateTheSame} from './../utils/point.js';
 import {UserAction, UpdateType} from './../const.js';
+import {pickElementDependOnValue} from '../utils/point.js';
+
 
 const Mode = {
   POINT: 'point',
@@ -12,10 +14,11 @@ const Mode = {
 
 
 export default class Point {
-  constructor(pointListContainer, changeData, changeMode) {
+  constructor(pointListContainer, changeData, changeMode, offers) {
     this._pointListContainer = pointListContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
+    this._offers = offers;
 
     this._pointComponent = null;
     this._pointEditorComponent = null;
@@ -32,12 +35,18 @@ export default class Point {
 
   init(point) {
     this._point = point;
+    // const pointOffers = this.pickOffers(this._point, this._offers)
+    // console.log(point)
+    // console.log(this._offers)
+    // console.log(pointOffers)
+    // console.log(this.pickOffers)
+
 
     const previousPointComponent = this._pointComponent;
     const previousPointEditorComponent = this._pointEditorComponent;
 
-    this._pointComponent = new PointView(point);
-    this._pointEditorComponent = new PointEditorView(point);
+    this._pointComponent = new PointView(point, this._offers);
+    this._pointEditorComponent = new PointEditorView(point, this._offers);
 
     this._pointComponent.setRollOutClickListener(this._changeViewToEdit);
     this._pointComponent.setFavoriteClickListener(this._changeFavoriteStatus);
@@ -64,6 +73,11 @@ export default class Point {
 
     remove(previousPointComponent);
     remove(previousPointEditorComponent);
+  }
+
+
+  pickOffers(point, offers) {
+    pickElementDependOnValue(point, offers);
   }
 
 

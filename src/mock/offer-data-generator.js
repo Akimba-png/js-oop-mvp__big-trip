@@ -1,4 +1,5 @@
 import {generateRandomArray} from '../utils/common.js';
+import {types} from './../const.js';
 
 const MAX_OFFERS_NUMBER = 5;
 
@@ -44,7 +45,7 @@ const generateRandomOffer = (type) => {
 };
 
 
-const generateRandomOffers = (types) => {
+const generateRandomOffers = () => {
   return types.map((type) => generateRandomOffer(type));
 };
 

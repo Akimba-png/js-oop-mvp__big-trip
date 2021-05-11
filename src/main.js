@@ -3,7 +3,9 @@ import FilterPresenter from './presenter/filter.js';
 import MainMenuView from './view/main-menu.js';
 import PointsModel from './model/points.js';
 import FilterModel from './model/filter.js';
+import OffersModel from './model/offers.js';
 import {generatePointData} from './mock/point-data-generator.js';
+import {generateRandomOffers} from './mock/offer-data-generator';
 import {render} from './utils/render.js';
 
 
@@ -17,7 +19,12 @@ const tripBoardElement = siteBodyElement.querySelector('.trip-events');
 
 
 const randomPointsData = new Array(POINT_COUNT).fill(null).map(generatePointData);
+const randomOffersData = generateRandomOffers();
+// console.log(randomOffersData);
 
+
+const offersModel = new OffersModel();
+offersModel.setOffers(randomOffersData);
 
 const pointsModel = new PointsModel();
 pointsModel.setPoints(randomPointsData);
@@ -26,7 +33,7 @@ const filterModel = new FilterModel();
 
 render(menuElement, new MainMenuView());
 
-const tripPresenter = new TripPresenter(tripBoardElement, tripDetailsElement, pointsModel, filterModel);
+const tripPresenter = new TripPresenter(tripBoardElement, tripDetailsElement, pointsModel, filterModel, offersModel);
 tripPresenter.init();
 
 
