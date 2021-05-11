@@ -249,7 +249,7 @@ export default class PointEditor extends SmartView {
     this.getElement().querySelector('.event__type-group').addEventListener('change', this._onPointTypeChange);
     this.getElement().querySelector('.event__input--destination').addEventListener('change', this._onPointInput);
     this.getElement().querySelector('.event__input--price').addEventListener('change', this._onPriceChange);
-    this.getElement().querySelector('.event__available-offers').addEventListener('change', this._onOfferChange)
+    this.getElement().querySelector('.event__available-offers').addEventListener('change', this._onOfferChange);
   }
 
 
