@@ -40,7 +40,7 @@ export default class Point {
     const previousPointEditorComponent = this._pointEditorComponent;
 
     this._pointComponent = new PointView(point);
-    this._pointEditorComponent = new PointEditorView(this._offers, point);
+    this._pointEditorComponent = new PointEditorView(this._offers, point, 'edit_mode');
 
     this._pointComponent.setRollOutClickListener(this._changeViewToEdit);
     this._pointComponent.setFavoriteClickListener(this._changeFavoriteStatus);

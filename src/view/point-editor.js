@@ -9,7 +9,7 @@ import {generatedDescriptions} from './../mock/point-data-generator.js';
 
 const ValidityMessage = {
   DESTINATION: 'Необходимо выбрать одно из предложенных направлений',
-  PRICE: 'Не отдохнуть(',
+  PRICE: 'Без цифр не отдохнуть(',
 };
 
 const EMPTY_POINT = {
@@ -81,7 +81,7 @@ const createEventDestinationTemplate = (destination) => {
 };
 
 
-const createPointEditorTemplate = (pointData, allTypeOffers) => {
+const createPointEditorTemplate = (pointData, allTypeOffers, pointMode) => {
   const {type, dateFrom, dateTo, basePrice, offers, destination} = pointData;
 
   return `<li class="trip-events__item">
@@ -125,14 +125,14 @@ const createPointEditorTemplate = (pointData, allTypeOffers) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+          <input class="event__input  event__input--price" id="event-price-1" type="text" minlength="1" name="event-price" value="${basePrice}" required>
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Delete</button>
-        <button class="event__rollup-btn" type="button">
-          <span class="visually-hidden">Open event</span>
-        </button>
+        <button class="event__reset-btn" type="reset">${pointMode ? 'Delete' : 'Cancel'}</button>
+        ${pointMode ? `<button class="event__rollup-btn" type="button">
+        <span class="visually-hidden">Open event</span>
+        </button>` : ''}
       </header>
       <section class="event__details">
         ${createEventOfferTemplate(type, offers, allTypeOffers)}
@@ -144,10 +144,11 @@ const createPointEditorTemplate = (pointData, allTypeOffers) => {
 
 
 export default class PointEditor extends SmartView {
-  constructor(offers, pointData = EMPTY_POINT) {
+  constructor(offers, pointData = EMPTY_POINT, pointMode) {
     super();
     this._pointState = PointEditor.parsePointDataToState(pointData);
     this._offers = offers;
+    this._pointMode = pointMode;
     this._datePickerStartDate = null;
     this._datePickerExpirationDate = null;
 
@@ -185,7 +186,7 @@ export default class PointEditor extends SmartView {
 
 
   getTemplate() {
-    return createPointEditorTemplate(this._pointState, this._offers);
+    return createPointEditorTemplate(this._pointState, this._offers, this._pointMode);
   }
 
 
@@ -272,7 +273,7 @@ export default class PointEditor extends SmartView {
 
   _onPointInput(evt) {
     if (!cities.includes(evt.target.value)) {
-      evt.target.setCustomValidity(ValidityMessage.DESTINATION);
+      evt.target.setCustomValidity(`${ValidityMessage.DESTINATION}: ${cities.join(', ')}`);
     }
     else {
       evt.target.setCustomValidity('');
