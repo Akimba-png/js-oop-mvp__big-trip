@@ -38,3 +38,8 @@ export const Index = {
   PREVIOUS: -1,
   NEXT: 1,
 };
+
+export const MenuItem = {
+  TABLE: 'table',
+  STATS: 'stats',
+};
