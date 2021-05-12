@@ -18,13 +18,12 @@ const tripDetailsElement = siteBodyElement.querySelector('.trip-main');
 const tripBoardElement = siteBodyElement.querySelector('.trip-events');
 
 
-const randomPointsData = new Array(POINT_COUNT).fill(null).map(generatePointData);
-const randomOffersData = generateRandomOffers();
-// console.log(randomOffersData);
-
-
 const offersModel = new OffersModel();
+const randomOffersData = generateRandomOffers();
 offersModel.setOffers(randomOffersData);
+const allTypeOffers = offersModel.getOffers();
+
+const randomPointsData = new Array(POINT_COUNT).fill(null).map(generatePointData);
 
 const pointsModel = new PointsModel();
 pointsModel.setPoints(randomPointsData);
@@ -44,3 +43,5 @@ document.querySelector('.trip-main__event-add-btn').addEventListener('click', (e
   evt.preventDefault();
   tripPresenter.createPoint();
 });
+
+export {allTypeOffers};

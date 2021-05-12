@@ -1,3 +1,4 @@
+export const TRUE_FLAG = true;
 export const types = ['taxi', 'bus', 'train', 'ship', 'transport', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 export const cities = ['Cartagena', 'Santiago', 'Tortuga', 'Jamaica', 'Barbados', 'Havana'];
 
@@ -32,4 +33,8 @@ export const FilterType = {
   PAST: 'past',
 };
 
-export const TRUE_FLAG = true;
+
+export const Index = {
+  PREVIOUS: -1,
+  NEXT: 1,
+};

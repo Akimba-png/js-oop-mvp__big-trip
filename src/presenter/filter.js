@@ -21,10 +21,10 @@ export default class Filter {
 
 
   init() {
-    const filterData = this._getFilterData(); // [{type, name, amount}, {}, {}]   массив со строковыми данными фильтров {type, name, amount}
+    const filterData = this._getFilterData();
     const previousFilterComponent = this._filterComponent;
 
-    this._filterComponent = new FilterView(filterData, this._filterModel.getActiveFilter()); // 2-ой парам содержит активный тип фильтра
+    this._filterComponent = new FilterView(filterData, this._filterModel.getActiveFilter());
     this._filterComponent.setFilterChangeListener(this._onFilterTypeChange);
 
 

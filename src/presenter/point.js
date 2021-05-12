@@ -35,18 +35,12 @@ export default class Point {
 
   init(point) {
     this._point = point;
-    // const pointOffers = this.pickOffers(this._point, this._offers)
-    // console.log(point)
-    // console.log(this._offers)
-    // console.log(pointOffers)
-    // console.log(this.pickOffers)
-
 
     const previousPointComponent = this._pointComponent;
     const previousPointEditorComponent = this._pointEditorComponent;
 
-    this._pointComponent = new PointView(point, this._offers);
-    this._pointEditorComponent = new PointEditorView(point, this._offers);
+    this._pointComponent = new PointView(point);
+    this._pointEditorComponent = new PointEditorView(this._offers, point);
 
     this._pointComponent.setRollOutClickListener(this._changeViewToEdit);
     this._pointComponent.setFavoriteClickListener(this._changeFavoriteStatus);

@@ -17,6 +17,8 @@ export default class Trip {
     this._tripDetailsContainer = tripDetailsContainer;
 
     this._tripSortComponent = null;
+    this._tripInfoComponent = null;
+    this._tripCostComponent = null;
     this._pointListComponent = new PointListView();
     this._listEmptyComponent = new ListEmptyView();
     this._pointsModel = pointsModel;
@@ -24,7 +26,8 @@ export default class Trip {
     this._offersModel = offersModel;
 
     this._pointPresenter = {};
-    this._offers = [];
+    this._offers = this._offersModel.getOffers();
+
     this._currentSortType = SortType.DATE;
 
     this._onViewAction = this._onViewAction.bind(this);
@@ -58,11 +61,8 @@ export default class Trip {
 
   _getPoints() {
     const activeFilter = this._filterModel.getActiveFilter();
-    // console.log(activeFilter)
     const points = this._pointsModel.getPoints();
-    // console.log(points)
     const filteredPoints = filter[activeFilter](points);
-    // console.log(filteredPoints)
 
     switch (this._currentSortType) {
       case SortType.DATE:
@@ -74,7 +74,6 @@ export default class Trip {
       default:
         throw new Error('Unknown sort-type. Check SortType value');
     }
-    // return this._pointsModel.getPoints();
   }
 
 
@@ -95,7 +94,7 @@ export default class Trip {
   }
 
 
-  _onModelEvent(updateType, data) {//instead 'data' use name 'updatedPoint?'
+  _onModelEvent(updateType, data) {
     switch (updateType) {
       case UpdateType.PATCH:
         this._pointPresenter[data.id].init(data);
@@ -120,7 +119,7 @@ export default class Trip {
     }
     this._currentSortType = sortType;
     this._clearBoard();
-    this._renderBoard(); // в демо проекте на шаге 7.2 здесь renderTaskList, а не вся борда
+    this._renderBoard();
   }
 
 
@@ -155,9 +154,10 @@ export default class Trip {
     this._pointNewPresenter.destroy();
     Object.values(this._pointPresenter).forEach((pointPresenter) => pointPresenter.destroy());
     this._pointPresenter = {};
-    this._offers =[];
     remove(this._tripSortComponent);
     remove(this._listEmptyComponent);
+    remove(this._tripInfoComponent);
+    remove(this._tripCostComponent);
 
     if (resetSorting) {
       this._currentSortType = SortType.DATE;
@@ -172,16 +172,14 @@ export default class Trip {
 
 
   _renderTripInfo(points) {
-    const tripInfoComponent = new TripInfoView(points);
-    render(this._tripDetailsContainer, tripInfoComponent, RenderPosition.AFTERBEGIN);
-    const tripCostComponent = new TripCostView(points);
-    render(tripInfoComponent, tripCostComponent);
+    this._tripInfoComponent = new TripInfoView(points);
+    render(this._tripDetailsContainer, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
+    this._tripCostComponent = new TripCostView(points);
+    render(this._tripInfoComponent, this._tripCostComponent);
   }
 
 
   _renderBoard() {
-    this._getOffers();
-    // console.log(this._getOffers())
     const points = this._getPoints();
     if (points.length === 0) {
       this._renderListEmpty();
@@ -189,7 +187,6 @@ export default class Trip {
     }
     this._renderTripSort();
     this._renderPoints(points);
-    // DON'T DELETE;
-    // this._renderTripInfo(points); // при перерисовке доски дублирует инфо
+    this._renderTripInfo(points);
   }
 }

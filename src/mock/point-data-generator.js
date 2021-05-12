@@ -1,7 +1,7 @@
+import {allTypeOffers} from './../main.js';
 import {types, cities} from './../const.js';
 import {getRandomInteger, getRandomArrayElement, generateRandomArray} from '../utils/common.js';
 import {pickElementDependOnValue} from '../utils/point.js';
-import {generateRandomOffers} from './offer-data-generator.js';
 import dayjs from 'dayjs';
 import {nanoid} from 'nanoid';
 
@@ -70,15 +70,13 @@ const createDateGenerator = () => {
 
 const generateDate = createDateGenerator();
 
-const generatedOffers = generateRandomOffers(types);
-
 const generatePointData = () => {
   const type = getRandomArrayElement(types);
   const dateInterval = generateDate();
   return {
     id: nanoid(),
     type,
-    offers: pickElementDependOnValue(type, generatedOffers),
+    offers: pickElementDependOnValue(type, allTypeOffers),
     destination: getRandomArrayElement(generatedDescriptions),
     basePrice: getRandomInteger(Period.BASE_PRICE_MIN, Period.BASE_PRICE_MAX),
     dateFrom: dateInterval.dateFrom,
@@ -87,4 +85,4 @@ const generatePointData = () => {
   };
 };
 
-export {generatePointData, generatedOffers, generatedDescriptions};
+export {generatePointData, generatedDescriptions};

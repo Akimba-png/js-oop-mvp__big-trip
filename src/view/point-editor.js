@@ -2,11 +2,15 @@ import SmartView from './smart.js';
 import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
-import {types, cities, DateFormat, TRUE_FLAG} from '../const.js';
-import {getRandomInteger, getRandomArrayElement} from '../utils/common.js';
+import {types, cities, DateFormat, TRUE_FLAG, Index} from '../const.js';
+import {getRandomArrayElement} from '../utils/common.js';
 import {humanizeDate, pickElementDependOnValue, compareTwoDates} from '../utils/point.js';
-import {generatedOffers, generatedDescriptions} from './../mock/point-data-generator.js';
+import {generatedDescriptions} from './../mock/point-data-generator.js';
 
+const ValidityMessage = {
+  DESTINATION: 'Необходимо выбрать одно из предложенных направлений',
+  PRICE: 'Не отдохнуть(',
+};
 
 const EMPTY_POINT = {
   type: getRandomArrayElement(types),
@@ -38,9 +42,8 @@ const createDestinationOptionTemplate = (cities) => {
 
 const createEventOfferTemplate = (type, offers, allTypeOffers) => {
   const availableOffers = pickElementDependOnValue(type, allTypeOffers);
-  return availableOffers.length > 0 ?
-    `<section class="event__section  event__section--offers">
-    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+  return `<section class="event__section  event__section--offers">
+    ${availableOffers.length > 0 ? `<h3 class="event__section-title  event__section-title--offers">Offers</h3>
     <div class="event__available-offers">
     ${availableOffers.map(({title, price}) => {
     const offerClassName = title.split(' ').pop();
@@ -53,7 +56,8 @@ const createEventOfferTemplate = (type, offers, allTypeOffers) => {
     <span class="event__offer-price">${price}</span>
     </label>
     </div>`;}).join('')}
-    </div></section>` : '';
+    </div>` : ''}
+    </section>`;
 };
 
 
@@ -79,9 +83,6 @@ const createEventDestinationTemplate = (destination) => {
 
 const createPointEditorTemplate = (pointData, allTypeOffers) => {
   const {type, dateFrom, dateTo, basePrice, offers, destination} = pointData;
-  console.log(pointData)
-  console.log(offers)
-  console.log(allTypeOffers)
 
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -143,7 +144,7 @@ const createPointEditorTemplate = (pointData, allTypeOffers) => {
 
 
 export default class PointEditor extends SmartView {
-  constructor(pointData = EMPTY_POINT, offers) {
+  constructor(offers, pointData = EMPTY_POINT) {
     super();
     this._pointState = PointEditor.parsePointDataToState(pointData);
     this._offers = offers;
@@ -167,19 +168,6 @@ export default class PointEditor extends SmartView {
 
 
   static parsePointDataToState(pointData) {
-    // console.log(pointData)
-    // console.log(pointData.type)
-    // console.log(allTypeOffers)
-    // const availableOffers = pickElementDependOnValue(pointData.type, allTypeOffers);
-    // console.log(availableOffers)
-    // console.log(pointData.offers)
-    // availableOffers.forEach((availableOffer) => {
-    //   if (pointData.offers.some((offer) => offer.title === availableOffer.title)) {
-    //     pointData.offers.isChecked = true;
-    //     return;
-    //   }
-    // })
-
     return Object.assign(
       {},
       pointData,
@@ -249,7 +237,7 @@ export default class PointEditor extends SmartView {
     this.getElement().querySelector('.event__type-group').addEventListener('change', this._onPointTypeChange);
     this.getElement().querySelector('.event__input--destination').addEventListener('change', this._onPointInput);
     this.getElement().querySelector('.event__input--price').addEventListener('change', this._onPriceChange);
-    this.getElement().querySelector('.event__available-offers').addEventListener('change', this._onOfferChange);
+    this.getElement().querySelector('.event__section--offers').addEventListener('change', this._onOfferChange);
   }
 
 
@@ -277,14 +265,14 @@ export default class PointEditor extends SmartView {
     }
     this.updateData({
       type: evt.target.value,
-      offers: pickElementDependOnValue(evt.target.value, generatedOffers),
+      offers: [],
     });
   }
 
 
   _onPointInput(evt) {
     if (!cities.includes(evt.target.value)) {
-      evt.target.setCustomValidity('Необходимо выбрать одно из предложенных направлений');
+      evt.target.setCustomValidity(ValidityMessage.DESTINATION);
     }
     else {
       evt.target.setCustomValidity('');
@@ -352,12 +340,12 @@ export default class PointEditor extends SmartView {
 
   _onPriceChange(evt) {
     evt.preventDefault();
-    if (!/^\d+$/.test(evt.target.value) || evt.target.value < 1) {
-      evt.target.setCustomValidity('Не отдохнуть:(');
+    if (!/^\d+$/.test(evt.target.value) || evt.target.value < Index.NEXT) {
+      evt.target.setCustomValidity(ValidityMessage.PRICE);
     } else {
       evt.target.setCustomValidity('');
       this.updateData({
-        basePrice: evt.target.value,
+        basePrice: parseInt(evt.target.value),
       },
       TRUE_FLAG,
       );
@@ -371,47 +359,22 @@ export default class PointEditor extends SmartView {
     if (evt.target.tagName !== 'INPUT') {
       return;
     }
-    // console.log(this._pointState)
-
-    // if (this._pointState.offers.some((offer) => offer.title === evt.target.value)) {
-    //   // const index = this._pointState.offers.findIndex((offer) => offer.title === evt.target.value);
-    //   // console.log(index)
-
-
-    // }
-    console.log(this._offers)
-    const index = this._pointState.offers.findIndex((offer) => offer.title === evt.target.value);
+    const selectedOffer = evt.target.value;
+    const index = this._pointState.offers.findIndex((offer) => offer.title === selectedOffer);
     if (index < 0) {
-      const testArray = pickElementDependOnValue(this._pointState.type, this._offers)
-
-      const newOffer = testArray.find((offer) => offer.title === evt.target.value)
+      const availableOffers = pickElementDependOnValue(this._pointState.type, this._offers);
+      const newOffer = availableOffers.find((offer) => offer.title === selectedOffer);
       this.updateData({
-        offers: [newOffer, ...this._pointState.offers]
+        offers: [newOffer, ...this._pointState.offers],
       },
       TRUE_FLAG,
       );
     } else {
-      // this._pointState.offers.splice(index, 1);
       this.updateData({
-        offers: [...this._pointState.offers.slice(0, index), ...this._pointState.offers.slice(index + 1)]
+        offers: [...this._pointState.offers.slice(0, index), ...this._pointState.offers.slice(index + Index.NEXT)],
       },
       TRUE_FLAG,
       );
     }
-
-    // console.log(index)
-
-    // console.log(this._pointState.offers)
-    // console.log(evt.target.value)
-    // this._pointState
-    // evt.target.value
-
   }
 }
-
-
- // Либо метод из демки:
-    // this._points = [
-    //   ...this._points.slice(0, index),
-    //   ...this._points.slice(index + 1)
-    // ];

@@ -1,4 +1,5 @@
 import Observer from './../utils/observer.js';
+import {Index} from './../const.js';
 
 export default class Points extends Observer {
   constructor() {
@@ -18,12 +19,12 @@ export default class Points extends Observer {
   updatePoint(updateType, updatedPoint) {
     const index = this._points.findIndex((point) => point.id === updatedPoint.id);
 
-    if (index === -1) {
+    if (index === Index.PREVIOUS) {
       throw new Error('Can\'t update unexisted point');
     }
 
     this._points = [
-      ...this._points.slice(0, index), updatedPoint, ...this._points.slice(index + 1),
+      ...this._points.slice(0, index), updatedPoint, ...this._points.slice(index + Index.NEXT),
     ];
 
     this._notify(updateType, updatedPoint);
@@ -45,11 +46,6 @@ export default class Points extends Observer {
       throw new Error('Can\'t update unexisted point');
     }
     this._points.splice(index, 1);
-    // Либо метод из демки:
-    // this._points = [
-    //   ...this._points.slice(0, index),
-    //   ...this._points.slice(index + 1)
-    // ];
     this._notify(updateType);
   }
 }
