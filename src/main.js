@@ -1,6 +1,7 @@
 import TripPresenter from './presenter/trip.js';
 import FilterPresenter from './presenter/filter.js';
 import MainMenuView from './view/main-menu.js';
+import ButtonNewView from './view/button-new.js';
 import PointsModel from './model/points.js';
 import FilterModel from './model/filter.js';
 import OffersModel from './model/offers.js';
@@ -11,6 +12,7 @@ import {MenuItem} from './const.js';
 
 
 const POINT_COUNT = 20;
+const DISABLED_STATUS = 'disabled';
 
 const siteBodyElement = document.querySelector('.page-body');
 const menuElement = siteBodyElement.querySelector('.trip-controls__navigation');
@@ -35,16 +37,34 @@ const filterModel = new FilterModel();
 const mainMenuComponent = new MainMenuView();
 render(menuElement, mainMenuComponent);
 
+const buttonNewComponent = new ButtonNewView();
+render(tripDetailsElement, buttonNewComponent);
+
+
+const onNewPointClose = () => {
+  buttonNewComponent.getElement().removeAttribute(DISABLED_STATUS);
+  // mainMenuComponent.setActiveItem(MenuItem.TABLE);
+};
+
+
 const onMenuClick = (menuItem) => {
   // console.log(menuItem)
   switch(menuItem) {
+    case MenuItem.NEW_EVENT:
+      // console.log(menuItem)
+      tripPresenter.createPoint(onNewPointClose);
+      buttonNewComponent.getElement().setAttribute(DISABLED_STATUS, DISABLED_STATUS);
+      // something happens;
+      break;
     case MenuItem.TABLE:
-      console.log(menuItem)
-
+      tripPresenter.init();
+      // console.log(menuItem)
       // something happens;
       break;
     case MenuItem.STATS:
-      console.log(menuItem)
+      tripPresenter.destroy();
+      // mainMenuComponent.setActiveItem(menuItem)
+      // console.log(menuItem)
       // something another happens
       break;
     default:
@@ -53,7 +73,7 @@ const onMenuClick = (menuItem) => {
 };
 
 mainMenuComponent.setMenuListener(onMenuClick);
-
+buttonNewComponent.setButtonNewListener(onMenuClick);
 
 
 const tripPresenter = new TripPresenter(tripBoardElement, tripDetailsElement, pointsModel, filterModel, offersModel);
@@ -62,10 +82,5 @@ tripPresenter.init();
 
 const filterPresenter = new FilterPresenter(filterElement, filterModel, pointsModel);
 filterPresenter.init();
-
-document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
-  evt.preventDefault();
-  tripPresenter.createPoint();
-});
 
 export {allTypeOffers};

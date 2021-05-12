@@ -47,10 +47,15 @@ export default class Trip {
   }
 
 
-  createPoint() {
+  destroy() {
+    this._clearBoard();
+  }
+
+
+  createPoint(callback) {
     this._currentSortType = SortType.DATE;
     this._filterModel.setActiveFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this._pointNewPresenter.init();
+    this._pointNewPresenter.init(callback);
   }
 
 

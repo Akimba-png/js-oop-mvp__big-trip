@@ -12,6 +12,7 @@ export default class PointNew {
     this._offers = offers;
 
     this._pointEditorComponent = null;
+    this._resumeNewButton = null;
 
     this._onEditorPointEscKeydown = this._onEditorPointEscKeydown.bind(this);
     this._onFormSubmit = this._onFormSubmit.bind(this);
@@ -19,7 +20,9 @@ export default class PointNew {
   }
 
 
-  init() {
+  init(callback) {
+    this._resumeNewButton = callback;
+
     if (this._pointEditorComponent !== null) {
       return;
     }
@@ -36,6 +39,9 @@ export default class PointNew {
   destroy() {
     if (this._pointEditorComponent === null) {
       return;
+    }
+    if (this._resumeNewButton !== null) {
+      this._resumeNewButton();
     }
     remove(this._pointEditorComponent);
     this._pointEditorComponent = null;

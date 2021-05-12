@@ -42,4 +42,5 @@ export const Index = {
 export const MenuItem = {
   TABLE: 'table',
   STATS: 'stats',
+  NEW_EVENT: 'new-event',
 };

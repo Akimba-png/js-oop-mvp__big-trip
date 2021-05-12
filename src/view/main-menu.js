@@ -24,7 +24,7 @@ export default class MainMenu extends AbstractView {
 
   setMenuListener(callback) {
     this._callback.menuItemClick = callback;
-    this.getElement().addEventListener('click', this._onMenuItemClick)
+    this.getElement().addEventListener('click', this._onMenuItemClick);
   }
 
 
@@ -37,11 +37,10 @@ export default class MainMenu extends AbstractView {
   }
 
 
-  // setMenuItem(menuItem) {
-  //   const item = this.getElement().querySelector(`[value=${menuItem}]`);
-
-  //   if (item !== null) {
-  //     item.checked = true;
-  //   }
-  // }
+  setActiveItem(menuItem) {
+    const item = this.getElement().querySelector(`[data-menu-item=${menuItem}]`);
+    if (item !== null) {
+      item.classList.add('trip-tabs__btn--active');
+    }
+  }
 }
