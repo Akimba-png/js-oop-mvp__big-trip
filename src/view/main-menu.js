@@ -14,6 +14,7 @@ export default class MainMenu extends AbstractView {
   constructor() {
     super();
     this._onMenuItemClick = this._onMenuItemClick.bind(this);
+    this._previousClickValue = null;
   }
 
 
@@ -29,11 +30,16 @@ export default class MainMenu extends AbstractView {
 
 
   _onMenuItemClick(evt) {
+    if (evt.target.dataset.menuItem === this._previousClickValue) {
+      return;
+    }
     evt.preventDefault();
+    // В КОНСТАНТУ
     if (evt.target.tagName !== 'A') {
       return;
     }
     this._callback.menuItemClick(evt.target.dataset.menuItem);
+    this._previousClickValue = evt.target.dataset.menuItem;
   }
 
 

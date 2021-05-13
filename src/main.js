@@ -8,7 +8,7 @@ import OffersModel from './model/offers.js';
 import {generatePointData} from './mock/point-data-generator.js';
 import {generateRandomOffers} from './mock/offer-data-generator';
 import {render} from './utils/render.js';
-import {MenuItem} from './const.js';
+import {MenuItem, UpdateType, FilterType} from './const.js';
 
 
 const POINT_COUNT = 20;
@@ -48,21 +48,25 @@ const onNewPointClose = () => {
 
 
 const onMenuClick = (menuItem) => {
-  // console.log(menuItem)
   switch(menuItem) {
     case MenuItem.NEW_EVENT:
-      // console.log(menuItem)
+      tripPresenter.destroy();
+      filterModel.setActiveFilter(UpdateType.MAJOR, FilterType.EVERYTHING)
+      tripPresenter.init();
       tripPresenter.createPoint(onNewPointClose);
       buttonNewComponent.getElement().setAttribute(DISABLED_STATUS, DISABLED_STATUS);
-      // something happens;
       break;
     case MenuItem.TABLE:
       tripPresenter.init();
+      buttonNewComponent.getElement().removeAttribute(DISABLED_STATUS, DISABLED_STATUS);
+
       // console.log(menuItem)
       // something happens;
       break;
     case MenuItem.STATS:
       tripPresenter.destroy();
+      buttonNewComponent.getElement().setAttribute(DISABLED_STATUS, DISABLED_STATUS);
+
       // mainMenuComponent.setActiveItem(menuItem)
       // console.log(menuItem)
       // something another happens

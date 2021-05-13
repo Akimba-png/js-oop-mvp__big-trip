@@ -8,7 +8,7 @@ export default class Observer {
   }
 
   removeObserver(observer) {
-    this._observers.filter((currentObserver) => currentObserver !== observer);
+    this._observers = this._observers.filter((currentObserver) => currentObserver !== observer);
   }
 
   _notify(event, payload) {
