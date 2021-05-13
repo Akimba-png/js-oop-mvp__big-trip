@@ -99,3 +99,22 @@ export const sortByTime = (pointA, pointB) => {
 
   return durationPointB - durationPointA;
 };
+
+
+export const sortByDate = (pointA, pointB) => {
+  const startDatePointA = pointA.dateFrom;
+  const startDatePointB = pointB.dateFrom;
+
+  const sortWeightForEmptyValue = getSortWeightForEmptyValue(startDatePointA, startDatePointB);
+
+  if (sortWeightForEmptyValue !== null) {
+    return sortWeightForEmptyValue;
+  }
+
+  return dayjs(startDatePointA).diff(startDatePointB);
+};
+
+
+export const isDateTheSame = (dateA, dateB) => {
+  return (dateA === null && dateB === null) ? true : dayjs(dateA).isSame(dateB, 'm');
+};

@@ -1,30 +1,47 @@
 import AbstractView from './abstract.js';
 
-const createFilterItemTemplate = (filterData) => {
-  return filterData.map(({name, amount}) => {
+const createFilterItemTemplate = (filterData, currentFilterType) => {
+  return filterData.map(({type, name, amount}) => {
     return `<div class="trip-filters__filter">
-     <input id="filter-${name}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${amount}" checked>
-     <label class="trip-filters__filter-label" for="filter-everything">${name} ${amount === 0 ? '' : amount}</label>
+     <input id="filter-${name}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${type}" ${type === currentFilterType ? 'checked' : ''}>
+     <label class="trip-filters__filter-label" for="filter-${name}">${name} ${amount === 0 ? '' : amount}</label>
     </div>`;
   }).join('');
 };
 
 
-const createFilterTemplate = (filterData) => {
+const createFilterTemplate = (filterData, currentFilterType) => {
   return `<form class="trip-filters" action="#" method="get">
-    ${createFilterItemTemplate(filterData)}
+    ${createFilterItemTemplate(filterData, currentFilterType)}
     <button class="visually-hidden" type="submit">Accept filter</button>
   </form>`;
 };
 
 
 export default class Filter extends AbstractView {
-  constructor(filterData) {
+  constructor(filterData, currentFilterType) {
     super();
     this._filterData = filterData;
+    this._currentFilterType = currentFilterType;
+
+    this._onFilterViewAction = this._onFilterViewAction.bind(this);
   }
 
   getTemplate() {
-    return createFilterTemplate(this._filterData);
+    return createFilterTemplate(this._filterData, this._currentFilterType);
+  }
+
+  setFilterChangeListener(callback) {
+    this._callback.filterChange = callback;
+    this.getElement().addEventListener('change', this._onFilterViewAction);
+  }
+
+
+  _onFilterViewAction(evt) {
+    evt.preventDefault();
+    if (evt.target.tagName !== 'INPUT') {
+      return;
+    }
+    this._callback.filterChange(evt.target.value);
   }
 }

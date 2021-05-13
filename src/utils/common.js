@@ -30,14 +30,14 @@ export const isEscEvent = (evt) => {
 };
 
 
-export const updatePoint = (points, modifiedPoint) => {
-  const index = points.findIndex((point) => point.id === modifiedPoint.id);
+// export const updatePoint = (points, modifiedPoint) => {
+//   const index = points.findIndex((point) => point.id === modifiedPoint.id);
 
-  if (index === -1) {
-    return points;
-  }
+//   if (index === -1) {
+//     return points;
+//   }
 
-  return [
-    ...points.slice(0, index), modifiedPoint, ...points.slice(index + 1),
-  ];
-};
+//   return [
+//     ...points.slice(0, index), modifiedPoint, ...points.slice(index + 1),
+//   ];
+// };
