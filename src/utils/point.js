@@ -37,15 +37,20 @@ export const compareTwoDates = (dateA, dateB) => {
 };
 
 
-export const getTimeDuration = (initialDate, expirationDate) => {
-  const difference = compareTwoDates(expirationDate, initialDate);
-  const duration = dayjs.duration(difference).$d;
+export const humanizeDateDuration = (tripTime) => {
+  const duration = dayjs.duration(tripTime).$d;
 
   const day = duration.days < DAYS_COUNT ? `0${duration.days}D` : `${duration.days}D`;
   const hour = duration.hours < DAYS_COUNT ? `0${duration.hours}H` : `${duration.hours}H`;
   const minute = duration.minutes < DAYS_COUNT ? `0${duration.minutes}M` : `${duration.minutes}M`;
-  const total = (difference / TimeFormat.MILLISECOND_PER_MINUTE) > TimeFormat.HOUR_PER_DAY ? `${day} ${hour} ${minute}` : (difference / TimeFormat.MILLISECOND_PER_MINUTE) > TimeFormat.MINUTE_PER_HOUR ? `${hour} ${minute}` : minute;
+  const total = (tripTime / TimeFormat.MILLISECOND_PER_MINUTE) > TimeFormat.HOUR_PER_DAY ? `${day} ${hour} ${minute}` : (tripTime / TimeFormat.MILLISECOND_PER_MINUTE) > TimeFormat.MINUTE_PER_HOUR ? `${hour} ${minute}` : minute;
   return total;
+};
+
+
+export const getTimeDuration = (initialDate, expirationDate) => {
+  const difference = compareTwoDates(expirationDate, initialDate);
+  return humanizeDateDuration(difference);
 };
 
 

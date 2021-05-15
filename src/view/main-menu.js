@@ -14,7 +14,7 @@ export default class MainMenu extends AbstractView {
   constructor() {
     super();
     this._onMenuItemClick = this._onMenuItemClick.bind(this);
-    this._previousClickValue = null;
+    this._previousClickValue = MenuItem.TABLE;
   }
 
 
@@ -30,23 +30,26 @@ export default class MainMenu extends AbstractView {
 
 
   _onMenuItemClick(evt) {
-    if (evt.target.dataset.menuItem === this._previousClickValue) {
-      return;
-    }
     evt.preventDefault();
     // В КОНСТАНТУ
     if (evt.target.tagName !== 'A') {
       return;
     }
+    if (evt.target.dataset.menuItem === this._previousClickValue) {
+      return;
+    }
     this._callback.menuItemClick(evt.target.dataset.menuItem);
     this._previousClickValue = evt.target.dataset.menuItem;
+    this._changeActiveItem();
   }
 
 
-  setActiveItem(menuItem) {
-    const item = this.getElement().querySelector(`[data-menu-item=${menuItem}]`);
-    if (item !== null) {
-      item.classList.add('trip-tabs__btn--active');
+  _changeActiveItem() {
+    const tableItem = this.getElement().querySelector(`[data-menu-item=${MenuItem.TABLE}]`);
+    const statsItem = this.getElement().querySelector(`[data-menu-item=${MenuItem.STATS}]`);
+    if (tableItem !== null && statsItem !== null) {
+      tableItem.classList.toggle('trip-tabs__btn--active');
+      statsItem.classList.toggle('trip-tabs__btn--active');
     }
   }
 }
