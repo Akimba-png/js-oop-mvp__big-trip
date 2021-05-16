@@ -12,6 +12,7 @@ export default class Points extends Observer {
   }
 
   getPoints() {
+    console.log(this._points);
     return this._points;
   }
 

@@ -1,6 +1,8 @@
 import AbstractView from './abstract.js';
 import {MenuItem} from './../const.js';
 
+const DISABLED_STATUS = 'disabled';
+
 
 const createButtonNewTemplate = () => {
   return `<button class="trip-main__event-add-btn  btn  btn--big  btn--yellow"
@@ -23,6 +25,16 @@ export default class ButtonNew extends AbstractView {
   setButtonNewListener(callback) {
     this._callback.buttonNewClick = callback;
     this.getElement().addEventListener('click', this._onButtonNewClick);
+  }
+
+
+  toggleDisablesStatus() {
+    const button = this.getElement();
+    if (button.hasAttribute(DISABLED_STATUS)) {
+      button.removeAttribute(DISABLED_STATUS);
+      return;
+    }
+    button.setAttribute(DISABLED_STATUS, DISABLED_STATUS);
   }
 
 

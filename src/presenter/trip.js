@@ -50,7 +50,6 @@ export default class Trip {
   destroy() {
     this._clearBoard({resetSorting: true, withoutTripInfo: true});
     remove(this._pointListComponent);
-    // remove(this._tripSortComponent);
     this._pointsModel.removeObserver(this._onModelEvent);
     this._filterModel.removeObserver(this._onModelEvent);
   }

@@ -1,5 +1,5 @@
 import AbstractView from './abstract.js';
-import {MenuItem} from './../const.js';
+import {MenuItem, Tag} from './../const.js';
 
 
 const createMainMenuTemplate = () => {
@@ -31,8 +31,7 @@ export default class MainMenu extends AbstractView {
 
   _onMenuItemClick(evt) {
     evt.preventDefault();
-    // В КОНСТАНТУ
-    if (evt.target.tagName !== 'A') {
+    if (evt.target.tagName !== Tag.A) {
       return;
     }
     if (evt.target.dataset.menuItem === this._previousClickValue) {

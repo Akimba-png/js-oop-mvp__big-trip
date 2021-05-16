@@ -9,6 +9,12 @@ export const FlagMode = {
 };
 
 
+export const Tag = {
+  INPUT: 'INPUT',
+  A: 'A',
+};
+
+
 export const DateFormat = {
   DAY_MONTH: 'D MMM',
   HOUR_MINUTE: 'hh:mm',

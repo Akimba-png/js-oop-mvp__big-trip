@@ -207,8 +207,10 @@ export default class PointEditor extends SmartView {
 
 
   setRollUpClickListener(callback) {
-    this._callback.rollUpClick = callback;
-    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._onRollUpClick);
+    if (this.getElement().querySelector('.event__rollup-btn') !== null) {
+      this._callback.rollUpClick = callback;
+      this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._onRollUpClick);
+    }
   }
 
 

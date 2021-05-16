@@ -20,12 +20,13 @@ export default class Filter {
   }
 
 
-  init() {
-    const filterData = this._getFilterData();
+  init(justFilterName) {
+    const filterData = this._getFilterData(justFilterName);
     const previousFilterComponent = this._filterComponent;
 
     this._filterComponent = new FilterView(filterData, this._filterModel.getActiveFilter());
     this._filterComponent.setFilterChangeListener(this._onFilterTypeChange);
+    console.log(filterData)
 
 
     if (previousFilterComponent === null) {
@@ -37,8 +38,8 @@ export default class Filter {
   }
 
 
-  _getFilterData() {
-    const points = this._pointsModel.getPoints();
+  _getFilterData(justFilterName) {
+    const points = justFilterName ? [] : this._pointsModel.getPoints();
     return [
       {
         type: FilterType.EVERYTHING,
