@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import {FlagMode} from './../const.js';
 
 dayjs.extend(duration);
 
@@ -121,5 +122,5 @@ export const sortByDate = (pointA, pointB) => {
 
 
 export const isDateTheSame = (dateA, dateB) => {
-  return (dateA === null && dateB === null) ? true : dayjs(dateA).isSame(dateB, 'm');
+  return (dateA === null && dateB === null) ? FlagMode.TRUE : dayjs(dateA).isSame(dateB, 'm');
 };

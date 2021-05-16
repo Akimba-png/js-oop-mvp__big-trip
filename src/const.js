@@ -1,4 +1,3 @@
-export const TRUE_FLAG = true;
 export const types = ['taxi', 'bus', 'train', 'ship', 'transport', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 export const cities = ['Cartagena', 'Santiago', 'Tortuga', 'Jamaica', 'Barbados', 'Havana'];
 
@@ -12,6 +11,7 @@ export const FlagMode = {
 export const Tag = {
   INPUT: 'INPUT',
   A: 'A',
+  BUTTON: 'BUTTON',
 };
 
 

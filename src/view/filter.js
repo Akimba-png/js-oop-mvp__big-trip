@@ -1,4 +1,5 @@
 import AbstractView from './abstract.js';
+import {Tag} from './../const.js';
 
 const createFilterItemTemplate = (filterData, currentFilterType) => {
   return filterData.map(({type, name, amount}) => {
@@ -39,7 +40,7 @@ export default class Filter extends AbstractView {
 
   _onFilterViewAction(evt) {
     evt.preventDefault();
-    if (evt.target.tagName !== 'INPUT') {
+    if (evt.target.tagName !== Tag.INPUT) {
       return;
     }
     this._callback.filterChange(evt.target.value);

@@ -6,7 +6,7 @@ import PointListView from './../view/point-list.js';
 import TripSortView from './../view/trip-sort.js';
 import ListEmptyView from './../view/list-empty.js';
 import {remove, render, RenderPosition} from './../utils/render.js';
-import {SortType, UpdateType, UserAction} from './../const.js';
+import {SortType, UpdateType, UserAction, FlagMode} from './../const.js';
 import {sortByDate, sortByPrice, sortByTime} from './../utils/point.js';
 import {filter} from './../utils/filter.js';
 
@@ -48,7 +48,7 @@ export default class Trip {
 
 
   destroy() {
-    this._clearBoard({resetSorting: true, withoutTripInfo: true});
+    this._clearBoard({resetSorting: FlagMode.TRUE, withoutTripInfo: FlagMode.TRUE});
     remove(this._pointListComponent);
     this._pointsModel.removeObserver(this._onModelEvent);
     this._filterModel.removeObserver(this._onModelEvent);
@@ -110,7 +110,7 @@ export default class Trip {
         this._renderBoard();
         break;
       case UpdateType.MAJOR:
-        this._clearBoard({resetSorting: true});
+        this._clearBoard({resetSorting: FlagMode.TRUE});
         this._renderBoard();
         break;
       default:
@@ -156,7 +156,7 @@ export default class Trip {
   }
 
 
-  _clearBoard({resetSorting = false, withoutTripInfo = false} = {}) {
+  _clearBoard({resetSorting = FlagMode.FALSE, withoutTripInfo = FlagMode.FALSE} = {}) {
     this._pointNewPresenter.destroy();
     Object.values(this._pointPresenter).forEach((pointPresenter) => pointPresenter.destroy());
     this._pointPresenter = {};

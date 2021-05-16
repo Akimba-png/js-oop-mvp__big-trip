@@ -26,8 +26,6 @@ export default class Filter {
 
     this._filterComponent = new FilterView(filterData, this._filterModel.getActiveFilter());
     this._filterComponent.setFilterChangeListener(this._onFilterTypeChange);
-    console.log(filterData)
-
 
     if (previousFilterComponent === null) {
       render(this._filterContainer, this._filterComponent);
@@ -72,5 +70,3 @@ export default class Filter {
     this._filterModel.setActiveFilter(UpdateType.MAJOR, filterType);
   }
 }
-
-

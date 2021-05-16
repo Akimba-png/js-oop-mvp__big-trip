@@ -1,5 +1,5 @@
 import AbstractView from './abstract.js';
-import {MenuItem} from './../const.js';
+import {MenuItem, Tag} from './../const.js';
 
 const DISABLED_STATUS = 'disabled';
 
@@ -40,7 +40,7 @@ export default class ButtonNew extends AbstractView {
 
   _onButtonNewClick(evt) {
     evt.preventDefault();
-    if (evt.target.tagName !== 'BUTTON') {
+    if (evt.target.tagName !== Tag.BUTTON) {
       return;
     }
     this._callback.buttonNewClick(evt.target.dataset.menuItem);
