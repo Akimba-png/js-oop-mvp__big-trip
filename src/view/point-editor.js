@@ -2,7 +2,7 @@ import SmartView from './smart.js';
 import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
-import {types, cities, DateFormat, TRUE_FLAG, Index} from '../const.js';
+import {types, cities, DateFormat, FlagMode, Index, Tag} from '../const.js';
 import {getRandomArrayElement} from '../utils/common.js';
 import {humanizeDate, pickElementDependOnValue, compareTwoDates} from '../utils/point.js';
 import {generatedDescriptions} from './../mock/point-data-generator.js';
@@ -163,7 +163,7 @@ export default class PointEditor extends SmartView {
     this._onOfferChange = this._onOfferChange.bind(this);
 
     this._setInnerListeners();
-    this._setDatePicker(this._datePickerStartDate, TRUE_FLAG);
+    this._setDatePicker(this._datePickerStartDate, FlagMode.TRUE);
     this._setDatePicker(this._datePickerExpirationDate);
   }
 
@@ -207,8 +207,10 @@ export default class PointEditor extends SmartView {
 
 
   setRollUpClickListener(callback) {
-    this._callback.rollUpClick = callback;
-    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._onRollUpClick);
+    if (this.getElement().querySelector('.event__rollup-btn') !== null) {
+      this._callback.rollUpClick = callback;
+      this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._onRollUpClick);
+    }
   }
 
 
@@ -229,7 +231,7 @@ export default class PointEditor extends SmartView {
     this.setRollUpClickListener(this._callback.rollUpClick);
     this.setSubmitListener(this._callback.pointEditorSubmit);
     this.setDeleteListener(this._callback.pointEditorDelete);
-    this._setDatePicker(this._datePickerStartDate, TRUE_FLAG);
+    this._setDatePicker(this._datePickerStartDate, FlagMode.TRUE);
     this._setDatePicker(this._datePickerExpirationDate);
   }
 
@@ -261,7 +263,7 @@ export default class PointEditor extends SmartView {
 
   _onPointTypeChange(evt) {
     evt.preventDefault();
-    if (evt.target.tagName !== 'INPUT') {
+    if (evt.target.tagName !== Tag.INPUT) {
       return;
     }
     this.updateData({
@@ -279,7 +281,7 @@ export default class PointEditor extends SmartView {
       evt.target.setCustomValidity('');
       evt.preventDefault();
       this.updateData({
-        destination: pickElementDependOnValue(evt.target.value, generatedDescriptions, TRUE_FLAG),
+        destination: pickElementDependOnValue(evt.target.value, generatedDescriptions, FlagMode.TRUE),
       });
     }
     evt.target.reportValidity();
@@ -348,7 +350,7 @@ export default class PointEditor extends SmartView {
       this.updateData({
         basePrice: parseInt(evt.target.value),
       },
-      TRUE_FLAG,
+      FlagMode.TRUE,
       );
     }
     evt.target.reportValidity();
@@ -357,7 +359,7 @@ export default class PointEditor extends SmartView {
 
   _onOfferChange(evt) {
     evt.preventDefault();
-    if (evt.target.tagName !== 'INPUT') {
+    if (evt.target.tagName !== Tag.INPUT) {
       return;
     }
     const selectedOffer = evt.target.value;
@@ -368,13 +370,13 @@ export default class PointEditor extends SmartView {
       this.updateData({
         offers: [newOffer, ...this._pointState.offers],
       },
-      TRUE_FLAG,
+      FlagMode.TRUE,
       );
     } else {
       this.updateData({
         offers: [...this._pointState.offers.slice(0, index), ...this._pointState.offers.slice(index + Index.NEXT)],
       },
-      TRUE_FLAG,
+      FlagMode.TRUE,
       );
     }
   }

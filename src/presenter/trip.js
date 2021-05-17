@@ -6,7 +6,7 @@ import PointListView from './../view/point-list.js';
 import TripSortView from './../view/trip-sort.js';
 import ListEmptyView from './../view/list-empty.js';
 import {remove, render, RenderPosition} from './../utils/render.js';
-import {SortType, UpdateType, UserAction, FilterType, TRUE_FLAG} from './../const.js';
+import {SortType, UpdateType, UserAction, FlagMode} from './../const.js';
 import {sortByDate, sortByPrice, sortByTime} from './../utils/point.js';
 import {filter} from './../utils/filter.js';
 
@@ -34,8 +34,6 @@ export default class Trip {
     this._onModelEvent = this._onModelEvent.bind(this);
     this._onPointModeChange = this._onPointModeChange.bind(this);
     this._onChangeSort = this._onChangeSort.bind(this);
-    this._pointsModel.addObserver(this._onModelEvent);
-    this._filterModel.addObserver(this._onModelEvent);
 
     this._pointNewPresenter = new PointNewPresenter(this._pointListComponent, this._onViewAction, this._offers);
   }
@@ -43,14 +41,22 @@ export default class Trip {
 
   init() {
     render(this._tripContainer, this._pointListComponent);
+    this._pointsModel.addObserver(this._onModelEvent);
+    this._filterModel.addObserver(this._onModelEvent);
     this._renderBoard();
   }
 
 
-  createPoint() {
-    this._currentSortType = SortType.DATE;
-    this._filterModel.setActiveFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this._pointNewPresenter.init();
+  destroy() {
+    this._clearBoard({resetSorting: FlagMode.TRUE, withoutTripInfo: FlagMode.TRUE});
+    remove(this._pointListComponent);
+    this._pointsModel.removeObserver(this._onModelEvent);
+    this._filterModel.removeObserver(this._onModelEvent);
+  }
+
+
+  createPoint(callback) {
+    this._pointNewPresenter.init(callback);
   }
 
 
@@ -104,7 +110,7 @@ export default class Trip {
         this._renderBoard();
         break;
       case UpdateType.MAJOR:
-        this._clearBoard(TRUE_FLAG);
+        this._clearBoard({resetSorting: FlagMode.TRUE});
         this._renderBoard();
         break;
       default:
@@ -150,18 +156,24 @@ export default class Trip {
   }
 
 
-  _clearBoard(resetSorting) {
+  _clearBoard({resetSorting = FlagMode.FALSE, withoutTripInfo = FlagMode.FALSE} = {}) {
     this._pointNewPresenter.destroy();
     Object.values(this._pointPresenter).forEach((pointPresenter) => pointPresenter.destroy());
     this._pointPresenter = {};
     remove(this._tripSortComponent);
     remove(this._listEmptyComponent);
-    remove(this._tripInfoComponent);
-    remove(this._tripCostComponent);
+
 
     if (resetSorting) {
       this._currentSortType = SortType.DATE;
     }
+
+    if (withoutTripInfo) {
+      return;
+    }
+    remove(this._tripInfoComponent);
+    remove(this._tripCostComponent);
+    this._tripInfoComponent = null;
   }
 
 
@@ -187,6 +199,8 @@ export default class Trip {
     }
     this._renderTripSort();
     this._renderPoints(points);
-    this._renderTripInfo(points);
+    if (this._tripInfoComponent === null) {
+      this._renderTripInfo(points);
+    }
   }
 }

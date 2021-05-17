@@ -2,10 +2,15 @@ import AbstractView from './abstract.js';
 import {compareTwoDates, humanizeDate} from '../utils/point.js';
 import {DateFormat} from './../const.js';
 
+const LIMIT_POINT_NUMBER = 3;
+
+
 const getTotalRoute = (pointData) => {
-  const uniqueCityList = new Set(pointData.map(({destination}) => destination.name));
-  const totalRoute = Array.from(uniqueCityList).join(' &mdash; ');
-  return totalRoute;
+  const totalRoute = pointData.map(({destination}) => destination.name);
+  if (totalRoute.length > LIMIT_POINT_NUMBER) {
+    return [totalRoute.shift(), totalRoute.pop()].join(' &mdash; ... &mdash; ');
+  }
+  return totalRoute.join(' &mdash; ');
 };
 
 
