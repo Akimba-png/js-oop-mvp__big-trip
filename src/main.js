@@ -6,13 +6,16 @@ import StatisticsView from './view/statistics.js';
 import PointsModel from './model/points.js';
 import FilterModel from './model/filter.js';
 import OffersModel from './model/offers.js';
-import {generatePointData} from './mock/point-data-generator.js';
+import Api from './api.js';
+// import {generatePointData} from './mock/point-data-generator.js';
 import {generateRandomOffers} from './mock/offer-data-generator';
 import {render, remove} from './utils/render.js';
-import {MenuItem, UpdateType, FilterType, FlagMode} from './const.js';
+import {MenuItem, UpdateType, FilterType, FlagMode, DataType} from './const.js';
 
 
-const POINT_COUNT = 20;
+// const POINT_COUNT = 1;
+const AUTHORIZATION_KEY = 'Basic agPYxDu3DyHxrKWBcdGEH';
+const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
 
 const siteBodyElement = document.querySelector('.page-body');
 const headerElement = siteBodyElement.querySelector('.page-header__container');
@@ -22,6 +25,8 @@ const filterElement = siteBodyElement.querySelector('.trip-controls__filters');
 const tripDetailsElement = siteBodyElement.querySelector('.trip-main');
 const tripBoardElement = siteBodyElement.querySelector('.trip-events');
 
+const api = new Api(END_POINT, AUTHORIZATION_KEY);
+
 let statisticsComponent = null;
 
 const offersModel = new OffersModel();
@@ -29,10 +34,11 @@ const randomOffersData = generateRandomOffers();
 offersModel.setOffers(randomOffersData);
 const allTypeOffers = offersModel.getOffers();
 
-const randomPointsData = new Array(POINT_COUNT).fill(null).map(generatePointData);
+// const randomPointsData = new Array(POINT_COUNT).fill(null).map(generatePointData);
+
 
 const pointsModel = new PointsModel();
-pointsModel.setPoints(randomPointsData);
+// pointsModel.setPoints(randomPointsData);
 const filterModel = new FilterModel();
 
 const mainMenuComponent = new MainMenuView();
@@ -84,5 +90,12 @@ const onMenuClick = (menuItem) => {
 
 mainMenuComponent.setMenuListener(onMenuClick);
 buttonNewComponent.setButtonNewListener(onMenuClick);
+
+api.getData(DataType.POINTS).then((response) => {
+  pointsModel.setPoints(UpdateType.INIT, response);
+})
+  .catch(() => {
+    pointsModel.setPoints(UpdateType.INIT, []);
+  });
 
 export {allTypeOffers};

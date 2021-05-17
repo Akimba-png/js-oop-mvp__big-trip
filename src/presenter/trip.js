@@ -5,6 +5,7 @@ import TripCostView from './../view/trip-cost.js';
 import PointListView from './../view/point-list.js';
 import TripSortView from './../view/trip-sort.js';
 import ListEmptyView from './../view/list-empty.js';
+import LoadingView from './../view/loading.js';
 import {remove, render, RenderPosition} from './../utils/render.js';
 import {SortType, UpdateType, UserAction, FlagMode} from './../const.js';
 import {sortByDate, sortByPrice, sortByTime} from './../utils/point.js';
@@ -21,11 +22,13 @@ export default class Trip {
     this._tripCostComponent = null;
     this._pointListComponent = new PointListView();
     this._listEmptyComponent = new ListEmptyView();
+    this._loadingComponent = new LoadingView();
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
     this._offersModel = offersModel;
 
     this._pointPresenter = {};
+    this._isLoading = FlagMode.TRUE;
     this._offers = this._offersModel.getOffers();
 
     this._currentSortType = SortType.DATE;
@@ -102,6 +105,11 @@ export default class Trip {
 
   _onModelEvent(updateType, data) {
     switch (updateType) {
+      case UpdateType.INIT:
+        this._isLoading = FlagMode.FALSE;
+        remove(this._loadingComponent);
+        this._renderBoard();
+        break;
       case UpdateType.PATCH:
         this._pointPresenter[data.id].init(data);
         break;
@@ -151,6 +159,11 @@ export default class Trip {
   }
 
 
+  _renderLoading() {
+    render(this._tripContainer, this._loadingComponent);
+  }
+
+
   _renderListEmpty() {
     render(this._tripContainer, this._listEmptyComponent);
   }
@@ -162,6 +175,7 @@ export default class Trip {
     this._pointPresenter = {};
     remove(this._tripSortComponent);
     remove(this._listEmptyComponent);
+    remove(this._loadingComponent);
 
 
     if (resetSorting) {
@@ -192,6 +206,10 @@ export default class Trip {
 
 
   _renderBoard() {
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
     const points = this._getPoints();
     if (points.length === 0) {
       this._renderListEmpty();

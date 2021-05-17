@@ -35,6 +35,7 @@ export const UserAction = {
 };
 
 export const UpdateType = {
+  INIT: 'init',
   PATCH: 'patch',
   MINOR: 'minor',
   MAJOR: 'major',
@@ -57,4 +58,10 @@ export const MenuItem = {
   TABLE: 'table',
   STATS: 'stats',
   NEW_EVENT: 'new-event',
+};
+
+export const DataType = {
+  DESTINATIONS: 'destinations',
+  OFFERS: 'offers',
+  POINTS: 'points',
 };
