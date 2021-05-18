@@ -96,6 +96,61 @@ api.getData(DataType.POINTS).then((response) => {
 })
   .catch(() => {
     pointsModel.setPoints(UpdateType.INIT, []);
+    // console.log('catch is here');
   });
 
+
+api.getData(DataType.OFFERS).then((response) => {
+  offersModel.setOffers(response);
+})
+  .catch(() => {
+    // console.log('offers catch is here');
+  });
+
+
+const test = offersModel.getOffers();
+console.log(test)
 export {allTypeOffers};
+
+
+
+
+
+
+
+// api.getData(DataType.OFFERS).then((response) => {
+//   offersModel.setOffers(response);
+// }).catch(() => {
+//   throw new Error('there is now any data');
+// }).then(api.getData(DataType.POINTS)).then((response) => {
+//   pointsModel.setPoints(UpdateType.INIT, response);
+// }).catch(() => {
+//   pointsModel.setPoints(UpdateType.INIT, []);
+//   console.log('ghehe')
+// })
+
+
+
+// const allTypeOffers = offersModel.getOffers();
+// console.log(allTypeOffers)
+
+
+// export {allTypeOffers};
+
+
+// const getResponse  = async () => {
+  // await api.getData(DataType.OFFERS).then((response) => {
+  //   offersModel.setOffers(response);
+  // }).catch(() => {
+  //   throw new Error('there is no any data');
+  // });
+
+  // await api.getData(DataType.POINTS).then((response) => {
+  //   pointsModel.setPoints(UpdateType.INIT, response);
+  // }).catch(() => {
+  //   pointsModel.setPoints(UpdateType.INIT, []);
+  // });
+
+// }
+
+// getResponse();
