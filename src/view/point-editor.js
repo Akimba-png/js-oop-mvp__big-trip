@@ -41,16 +41,17 @@ const createDestinationOptionTemplate = (cities) => {
 
 
 const createEventOfferTemplate = (type, offers, allTypeOffers) => {
+  let index = 0;
   const availableOffers = pickElementDependOnValue(type, allTypeOffers);
   return `<section class="event__section  event__section--offers">
     ${availableOffers.length > 0 ? `<h3 class="event__section-title  event__section-title--offers">Offers</h3>
     <div class="event__available-offers">
     ${availableOffers.map(({title, price}) => {
-    const offerClassName = title.split(' ').pop();
+    const offerClassName = title.split(' ').pop() + '&ndash;' + index++;
     const checkedAttribute = offers.some((offer) => offer.title === title) ? 'checked' : '';
     return `<div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerClassName}-1" type="checkbox" name="event-offer-${offerClassName}" value="${title}" ${checkedAttribute}>
-    <label class="event__offer-label" for="event-offer-${offerClassName}-1">
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerClassName}" type="checkbox" name="event-offer-${offerClassName}" value="${title}" ${checkedAttribute}>
+    <label class="event__offer-label" for="event-offer-${offerClassName}">
     <span class="event__offer-title">${title}</span>
     &plus;&euro;&nbsp;
     <span class="event__offer-price">${price}</span>

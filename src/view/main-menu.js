@@ -29,6 +29,12 @@ export default class MainMenu extends AbstractView {
   }
 
 
+  removeMenuListener() {
+    this.getElement().removeEventListener('click', this._onMenuItemClick);
+    this.removeElement();
+  }
+
+
   _onMenuItemClick(evt) {
     evt.preventDefault();
     if (evt.target.tagName !== Tag.A) {

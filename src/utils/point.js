@@ -124,3 +124,11 @@ export const sortByDate = (pointA, pointB) => {
 export const isDateTheSame = (dateA, dateB) => {
   return (dateA === null && dateB === null) ? FlagMode.TRUE : dayjs(dateA).isSame(dateB, 'm');
 };
+
+export const isOffersTheSame = (previousPointState, currentPointState) => {
+  if (currentPointState.offers.length === previousPointState.offers.length) {
+    const totalOffers = Array.from(new Set([...previousPointState.offers, ...currentPointState.offers]));
+    return totalOffers.length === previousPointState.offers.length;
+  }
+  return false;
+};

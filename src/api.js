@@ -74,4 +74,19 @@ export default class Api {
   static toJSON(response) {
     return response.json();
   }
+
+  // FOR TESTING
+  _load1({
+    url,
+    method = Method.GET,
+    body = null,
+    headers = new Headers(),
+  }) {
+    headers.append('Authori1zation', this._authorizationKey);
+    return fetch(
+      `${this._endPoint}/${url}`,
+      {method, headers, body},
+    ).then(Api.checkStatus)
+      .catch(Api.catchError);
+  }
 }

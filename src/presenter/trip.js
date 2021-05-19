@@ -29,7 +29,9 @@ export default class Trip {
 
     this._pointPresenter = {};
     this._isLoading = FlagMode.TRUE;
-    this._offers = this._offersModel.getOffers();
+    this._isLoadingOffers = FlagMode.TRUE;
+
+    this._offers = null;
 
     this._currentSortType = SortType.DATE;
 
@@ -38,13 +40,14 @@ export default class Trip {
     this._onPointModeChange = this._onPointModeChange.bind(this);
     this._onChangeSort = this._onChangeSort.bind(this);
 
-    this._pointNewPresenter = new PointNewPresenter(this._pointListComponent, this._onViewAction, this._offers);
+    this._pointNewPresenter = new PointNewPresenter(this._pointListComponent, this._onViewAction);
   }
 
 
   init() {
     render(this._tripContainer, this._pointListComponent);
     this._pointsModel.addObserver(this._onModelEvent);
+    this._offersModel.addObserver(this._onModelEvent);
     this._filterModel.addObserver(this._onModelEvent);
     this._renderBoard();
   }
@@ -59,7 +62,7 @@ export default class Trip {
 
 
   createPoint(callback) {
-    this._pointNewPresenter.init(callback);
+    this._pointNewPresenter.init(callback, this._offers);
   }
 
 
@@ -105,9 +108,13 @@ export default class Trip {
 
   _onModelEvent(updateType, data) {
     switch (updateType) {
-      case UpdateType.INIT:
+      case UpdateType.INIT_POINTS:
         this._isLoading = FlagMode.FALSE;
-        remove(this._loadingComponent);
+        this._renderBoard();
+        break;
+      case UpdateType.INIT_OFFERS:
+        this._isLoadingOffers = FlagMode.FALSE;
+        this._offers = this._offersModel.getOffers();
         this._renderBoard();
         break;
       case UpdateType.PATCH:
@@ -206,10 +213,12 @@ export default class Trip {
 
 
   _renderBoard() {
-    if (this._isLoading) {
+    if (this._isLoading || this._isLoadingOffers) {
       this._renderLoading();
       return;
     }
+    remove(this._loadingComponent);
+
     const points = this._getPoints();
     if (points.length === 0) {
       this._renderListEmpty();

@@ -13,6 +13,8 @@ const createButtonNewTemplate = () => {
 export default class ButtonNew extends AbstractView {
   constructor() {
     super();
+    this._button = this.getElement();
+    this.toggleDisabledStatus();
     this._onButtonNewClick = this._onButtonNewClick.bind(this);
   }
 
@@ -28,13 +30,28 @@ export default class ButtonNew extends AbstractView {
   }
 
 
-  toggleDisablesStatus() {
-    const button = this.getElement();
-    if (button.hasAttribute(DISABLED_STATUS)) {
-      button.removeAttribute(DISABLED_STATUS);
+  toggleDisabledStatus() {
+    if (this._button.hasAttribute(DISABLED_STATUS)) {
+      this._button.removeAttribute(DISABLED_STATUS);
       return;
     }
-    button.setAttribute(DISABLED_STATUS, DISABLED_STATUS);
+    this._button.setAttribute(DISABLED_STATUS, DISABLED_STATUS);
+  }
+
+
+  setEnabledStatus() {
+    if (!this._button.hasAttribute(DISABLED_STATUS)) {
+      return;
+    }
+    this._button.removeAttribute(DISABLED_STATUS);
+  }
+
+
+  setDisabledStatus() {
+    if (this._button.hasAttribute(DISABLED_STATUS)) {
+      return;
+    }
+    this._button.setAttribute(DISABLED_STATUS, DISABLED_STATUS);
   }
 
 

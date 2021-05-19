@@ -2,7 +2,7 @@ import PointView from './../view/point.js';
 import PointEditorView from './../view/point-editor.js';
 import {render, replace, remove} from './../utils/render.js';
 import {isEscEvent} from './../utils/common.js';
-import {isDateTheSame} from './../utils/point.js';
+import {isDateTheSame, isOffersTheSame} from './../utils/point.js';
 import {UserAction, UpdateType} from './../const.js';
 import {pickElementDependOnValue} from '../utils/point.js';
 
@@ -117,7 +117,7 @@ export default class Point {
 
     const isMinorUpdate = (!isDateTheSame(this._point.dateFrom, point.dateFrom) ||
     !isDateTheSame(this._point.dateTo, point.dateTo) ||
-    !(this._point.basePrice === point.basePrice));
+    !(this._point.basePrice === point.basePrice)) || !isOffersTheSame(this._point, point);
 
     this._changeData(
       UserAction.UPDATE_POINT,
