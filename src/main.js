@@ -7,6 +7,7 @@ import ErrorView from './view/error.js';
 import PointsModel from './model/points.js';
 import FilterModel from './model/filter.js';
 import OffersModel from './model/offers.js';
+import DestinationsModel from './model/destinations.js';
 import Api from './api.js';
 import {render, remove} from './utils/render.js';
 import {MenuItem, UpdateType, FilterType, FlagMode, DataType} from './const.js';
@@ -27,6 +28,7 @@ const api = new Api(END_POINT, AUTHORIZATION_KEY);
 const offersModel = new OffersModel();
 const pointsModel = new PointsModel();
 const filterModel = new FilterModel();
+const destinationsModel = new DestinationsModel();
 
 const mainMenuComponent = new MainMenuView();
 render(menuElement, mainMenuComponent);
@@ -34,7 +36,7 @@ const buttonNewComponent = new ButtonNewView();
 render(tripDetailsElement, buttonNewComponent);
 const errorView = new ErrorView();
 
-const tripPresenter = new TripPresenter(tripBoardElement, tripDetailsElement, pointsModel, filterModel, offersModel);
+const tripPresenter = new TripPresenter(tripBoardElement, tripDetailsElement, pointsModel, filterModel, offersModel, destinationsModel);
 const filterPresenter = new FilterPresenter(filterElement, filterModel, pointsModel);
 
 let loadStatus = FlagMode.TRUE;
@@ -94,6 +96,7 @@ filterPresenter.init();
 api.getData(DataType.POINTS).then((response) => {
   pointsModel.setPoints(UpdateType.INIT_POINTS, response);
   mainMenuComponent.setMenuListener(onMenuClick);
+  buttonNewComponent.setButtonNewListener(onMenuClick);
 })
   .catch(() => {
     pointsModel.setPoints(UpdateType.INIT_POINTS, []);
@@ -104,6 +107,15 @@ api.getData(DataType.POINTS).then((response) => {
 
 api.getData(DataType.OFFERS).then((response) => {
   offersModel.setOffers(UpdateType.INIT_OFFERS, response);
+  buttonNewComponent.setEnabledStatus();
+})
+  .catch(() => {
+    onLoadError();
+  });
+
+
+api.getData(DataType.DESTINATIONS).then((response) => {
+  destinationsModel.setDestinations(UpdateType.INIT_DESTINATIONS, response);
   buttonNewComponent.setEnabledStatus();
 })
   .catch(() => {

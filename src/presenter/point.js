@@ -6,6 +6,7 @@ import {isDateTheSame, isOffersTheSame} from './../utils/point.js';
 import {UserAction, UpdateType} from './../const.js';
 import {pickElementDependOnValue} from '../utils/point.js';
 
+const EDIT_MODE = 'edit_mode';
 
 const Mode = {
   POINT: 'point',
@@ -14,11 +15,12 @@ const Mode = {
 
 
 export default class Point {
-  constructor(pointListContainer, changeData, changeMode, offers) {
+  constructor(pointListContainer, changeData, changeMode, offers, destinations) {
     this._pointListContainer = pointListContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
     this._offers = offers;
+    this._destinations = destinations;
 
     this._pointComponent = null;
     this._pointEditorComponent = null;
@@ -40,7 +42,7 @@ export default class Point {
     const previousPointEditorComponent = this._pointEditorComponent;
 
     this._pointComponent = new PointView(point);
-    this._pointEditorComponent = new PointEditorView(this._offers, point, 'edit_mode');
+    this._pointEditorComponent = new PointEditorView(this._offers, this._destinations, point, EDIT_MODE);
 
     this._pointComponent.setRollOutClickListener(this._changeViewToEdit);
     this._pointComponent.setFavoriteClickListener(this._changeFavoriteStatus);

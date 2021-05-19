@@ -35,6 +35,7 @@ export const UserAction = {
 };
 
 export const UpdateType = {
+  INIT_DESTINATIONS: 'init_destinations',
   INIT_POINTS: 'init_points',
   INIT_OFFERS: 'init_offers',
   PATCH: 'patch',

@@ -13,7 +13,7 @@ import {filter} from './../utils/filter.js';
 
 
 export default class Trip {
-  constructor(tripContainer, tripDetailsContainer, pointsModel, filterModel, offersModel) {
+  constructor(tripContainer, tripDetailsContainer, pointsModel, filterModel, offersModel, destinationsModel) {
     this._tripContainer = tripContainer;
     this._tripDetailsContainer = tripDetailsContainer;
 
@@ -26,12 +26,15 @@ export default class Trip {
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
     this._offersModel = offersModel;
+    this._destinationsModel = destinationsModel;
 
     this._pointPresenter = {};
     this._isLoading = FlagMode.TRUE;
     this._isLoadingOffers = FlagMode.TRUE;
+    this._isLoadingDestinations = FlagMode.TRUE;
 
     this._offers = null;
+    this._destinations = null;
 
     this._currentSortType = SortType.DATE;
 
@@ -48,6 +51,7 @@ export default class Trip {
     render(this._tripContainer, this._pointListComponent);
     this._pointsModel.addObserver(this._onModelEvent);
     this._offersModel.addObserver(this._onModelEvent);
+    this._destinationsModel.addObserver(this._onModelEvent);
     this._filterModel.addObserver(this._onModelEvent);
     this._renderBoard();
   }
@@ -57,12 +61,14 @@ export default class Trip {
     this._clearBoard({resetSorting: FlagMode.TRUE, withoutTripInfo: FlagMode.TRUE});
     remove(this._pointListComponent);
     this._pointsModel.removeObserver(this._onModelEvent);
+    this._offersModel.removeObserver(this._onModelEvent);
+    this._destinationsModel.removeObserver(this._onModelEvent);
     this._filterModel.removeObserver(this._onModelEvent);
   }
 
 
-  createPoint(callback) {
-    this._pointNewPresenter.init(callback, this._offers);
+  createPoint(resumeNewButton) {
+    this._pointNewPresenter.init(resumeNewButton, this._offers, this._destinations);
   }
 
 
@@ -117,6 +123,11 @@ export default class Trip {
         this._offers = this._offersModel.getOffers();
         this._renderBoard();
         break;
+      case UpdateType.INIT_DESTINATIONS:
+        this._isLoadingDestinations = FlagMode.FALSE;
+        this._destinations = this._destinationsModel.getDestinations();
+        this._renderBoard();
+        break;
       case UpdateType.PATCH:
         this._pointPresenter[data.id].init(data);
         break;
@@ -155,7 +166,7 @@ export default class Trip {
 
 
   _renderPoint(point) {
-    const pointPresenter = new PointPresenter(this._pointListComponent, this._onViewAction, this._onPointModeChange, this._offers);
+    const pointPresenter = new PointPresenter(this._pointListComponent, this._onViewAction, this._onPointModeChange, this._offers, this._destinations);
     pointPresenter.init(point);
     this._pointPresenter[point.id] = pointPresenter;
   }
@@ -213,7 +224,7 @@ export default class Trip {
 
 
   _renderBoard() {
-    if (this._isLoading || this._isLoadingOffers) {
+    if (this._isLoading || this._isLoadingOffers || this._isLoadingDestinations) {
       this._renderLoading();
       return;
     }
