@@ -13,7 +13,7 @@ import {filter} from './../utils/filter.js';
 
 
 export default class Trip {
-  constructor(tripContainer, tripDetailsContainer, pointsModel, filterModel, offersModel, destinationsModel) {
+  constructor(tripContainer, tripDetailsContainer, pointsModel, filterModel, offersModel, destinationsModel, api) {
     this._tripContainer = tripContainer;
     this._tripDetailsContainer = tripDetailsContainer;
 
@@ -27,6 +27,7 @@ export default class Trip {
     this._filterModel = filterModel;
     this._offersModel = offersModel;
     this._destinationsModel = destinationsModel;
+    this._api = api;
 
     this._pointPresenter = {};
     this._isLoading = FlagMode.TRUE;
@@ -98,7 +99,9 @@ export default class Trip {
   _onViewAction(actionType, updateType, updatedPoint) {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this._pointsModel.updatePoint(updateType, updatedPoint);
+        this._api.updatePoint(updatedPoint).then((response) => {
+          this._pointsModel.updatePoint(updateType, response);
+        });
         break;
       case UserAction.ADD_POINT:
         this._pointsModel.addPoint(updateType, updatedPoint);

@@ -36,7 +36,7 @@ const buttonNewComponent = new ButtonNewView();
 render(tripDetailsElement, buttonNewComponent);
 const errorView = new ErrorView();
 
-const tripPresenter = new TripPresenter(tripBoardElement, tripDetailsElement, pointsModel, filterModel, offersModel, destinationsModel);
+const tripPresenter = new TripPresenter(tripBoardElement, tripDetailsElement, pointsModel, filterModel, offersModel, destinationsModel, api);
 const filterPresenter = new FilterPresenter(filterElement, filterModel, pointsModel);
 
 let loadStatus = FlagMode.TRUE;

@@ -31,7 +31,7 @@ export default class Api {
 
 
   updatePoint(point) {
-    this._load({
+    return this._load({
       url: `${DataType.POINTS}/${point.id}`,
       method: Method.PUT,
       body: JSON.stringify(PointsModel.adaptToServer(point)),
@@ -73,20 +73,5 @@ export default class Api {
 
   static toJSON(response) {
     return response.json();
-  }
-
-  // FOR TESTING
-  _load1({
-    url,
-    method = Method.GET,
-    body = null,
-    headers = new Headers(),
-  }) {
-    headers.append('Authori1zation', this._authorizationKey);
-    return fetch(
-      `${this._endPoint}/${url}`,
-      {method, headers, body},
-    ).then(Api.checkStatus)
-      .catch(Api.catchError);
   }
 }
