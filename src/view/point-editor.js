@@ -6,6 +6,8 @@ import {types, DateFormat, FlagMode, Index, Tag} from '../const.js';
 import {getRandomArrayElement} from '../utils/common.js';
 import {humanizeDate, pickElementDependOnValue, compareTwoDates} from '../utils/point.js';
 
+const TIME_GAP = 5;
+
 const ValidityMessage = {
   DESTINATION: 'Необходимо выбрать одно из предложенных направлений',
   PRICE: 'Без цифр не отдохнуть(',
@@ -20,7 +22,7 @@ const EMPTY_POINT = {
     pictures: '',
   },
   dateFrom: dayjs().toDate(),
-  dateTo: dayjs().toDate(),
+  dateTo: dayjs().add(TIME_GAP, 'm').toDate(),
   basePrice: '',
 };
 
@@ -306,17 +308,22 @@ export default class PointEditor extends SmartView {
         {
           dateFormat: 'd/m/y H:i',
           defaultDate: this._pointState.dateFrom,
+          enableTime: FlagMode.TRUE,
+          time_24hr: FlagMode.TRUE,
           onChange: this._onDateFromChange,
         },
       );
       return;
     }
 
-    datePicker = flatpickr(
+    datePicker  = flatpickr(
       this.getElement().querySelector('#event-end-time-1'),
       {
         dateFormat: 'd/m/y H:i',
         defaultDate: this._pointState.dateTo,
+        enableTime: FlagMode.TRUE,
+        time_24hr: FlagMode.TRUE,
+        minDate: dayjs(this._pointState.dateFrom).add(TIME_GAP, 'm').toDate(),
         onChange: this._onDateToChange,
       },
     );
@@ -326,23 +333,20 @@ export default class PointEditor extends SmartView {
   _onDateFromChange(userInput) {
     if (compareTwoDates(this._pointState.dateTo, userInput) < 0) {
       this.updateData({
-        dateFrom: userInput,
-        dateTo: userInput,
+        dateFrom: dayjs(userInput).toDate(),
+        dateTo: dayjs(userInput).add(TIME_GAP, 'm').toDate(),
       });
       return;
     }
     this.updateData({
-      dateFrom: userInput,
+      dateFrom: dayjs(userInput).toDate(),
     });
   }
 
 
   _onDateToChange(userInput) {
-    if (compareTwoDates(userInput, this._pointState.dateFrom) < 0) {
-      userInput = this._pointState.dateFrom;
-    }
     this.updateData({
-      dateTo: userInput,
+      dateTo: dayjs(userInput).toDate(),
     });
   }
 

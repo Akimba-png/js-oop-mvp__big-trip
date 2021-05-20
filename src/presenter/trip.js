@@ -104,10 +104,14 @@ export default class Trip {
         });
         break;
       case UserAction.ADD_POINT:
-        this._pointsModel.addPoint(updateType, updatedPoint);
+        this._api.addPoint(updatedPoint).then((response) => {
+          this._pointsModel.addPoint(updateType, response);
+        });
         break;
       case UserAction.DELETE_POINT:
-        this._pointsModel.deletePoint(updateType, updatedPoint);
+        this._api.deletePoint(updatedPoint).then(() => {
+          this._pointsModel.deletePoint(updateType, updatedPoint);
+        });
         break;
       default:
         throw new Error('Unknown action-type. Check UserAction value');
