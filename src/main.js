@@ -12,7 +12,7 @@ import Api from './api.js';
 import {render, remove} from './utils/render.js';
 import {MenuItem, UpdateType, FilterType, FlagMode, DataType} from './const.js';
 
-const AUTHORIZATION_KEY = 'Basic agPYxDu3DyHxrKWBcdGEH';
+const AUTHORIZATION_KEY = 'Basic 4agPYxDu3DyHxrKWBcdGEH';
 const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
 
 const siteBodyElement = document.querySelector('.page-body');
