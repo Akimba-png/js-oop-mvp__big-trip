@@ -36,6 +36,7 @@ export default class Trip {
 
     this._offers = null;
     this._destinations = null;
+    this._resumeNewButton = null;
 
     this._currentSortType = SortType.DATE;
 
@@ -48,7 +49,8 @@ export default class Trip {
   }
 
 
-  init() {
+  init(resumeNewButton) {
+    this._resumeNewButton = resumeNewButton;
     render(this._tripContainer, this._pointListComponent);
     this._pointsModel.addObserver(this._onModelEvent);
     this._offersModel.addObserver(this._onModelEvent);
@@ -68,8 +70,8 @@ export default class Trip {
   }
 
 
-  createPoint(resumeNewButton) {
-    this._pointNewPresenter.init(resumeNewButton, this._offers, this._destinations);
+  createPoint() {
+    this._pointNewPresenter.init(this._resumeNewButton, this._offers, this._destinations);
   }
 
 
@@ -245,7 +247,9 @@ export default class Trip {
       return;
     }
     remove(this._loadingComponent);
-
+    if (!this._isLoadingOffers && !this._isLoadingDestinations) {
+      this._resumeNewButton();
+    }
     const points = this._getPoints();
     if (points.length === 0) {
       this._renderListEmpty();

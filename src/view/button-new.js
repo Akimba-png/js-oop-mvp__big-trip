@@ -14,7 +14,7 @@ export default class ButtonNew extends AbstractView {
   constructor() {
     super();
     this._button = this.getElement();
-    this.toggleDisabledStatus();
+    this.setDisabledStatus();
     this._onButtonNewClick = this._onButtonNewClick.bind(this);
   }
 
@@ -27,15 +27,6 @@ export default class ButtonNew extends AbstractView {
   setButtonNewListener(callback) {
     this._callback.buttonNewClick = callback;
     this.getElement().addEventListener('click', this._onButtonNewClick);
-  }
-
-
-  toggleDisabledStatus() {
-    if (this._button.hasAttribute(DISABLED_STATUS)) {
-      this._button.removeAttribute(DISABLED_STATUS);
-      return;
-    }
-    this._button.setAttribute(DISABLED_STATUS, DISABLED_STATUS);
   }
 
 

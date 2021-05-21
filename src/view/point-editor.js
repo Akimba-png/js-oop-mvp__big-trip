@@ -179,7 +179,7 @@ export default class PointEditor extends SmartView {
         isSaving: FlagMode.FALSE,
         isDeleting: FlagMode.FALSE,
         isDisabled: FlagMode.FALSE,
-      }
+      },
     );
   }
 
