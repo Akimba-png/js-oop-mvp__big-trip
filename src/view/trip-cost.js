@@ -2,7 +2,11 @@ import AbstractView from './abstract.js';
 
 const getTotalCost = (pointData) => {
   let totalCost = 0;
-  pointData.forEach(({basePrice}) => totalCost += basePrice);
+  pointData.forEach(({basePrice, offers}) => {
+    let offersCost = 0;
+    offers.forEach((offer) => offersCost += offer.price);
+    totalCost += basePrice + offersCost;
+  });
   return totalCost;
 };
 

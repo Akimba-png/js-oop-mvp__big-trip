@@ -11,20 +11,6 @@ export const getRandomArrayElement = (array) => {
 };
 
 
-export const generateRandomArray = (array, minLength = 0, maxLength = array.length) => {
-  let temp;
-  let j;
-  for (let i = array.length - 1; i > 0; i--) {
-    j = getRandomInteger(0, i);
-    temp = array[j];
-    array[j] = array[i];
-    array[i] = temp;
-  }
-  array.length = getRandomInteger(minLength, maxLength);
-  return array;
-};
-
-
 export const isEscEvent = (evt) => {
   return evt.key === ('Escape' || 'Esc');
 };

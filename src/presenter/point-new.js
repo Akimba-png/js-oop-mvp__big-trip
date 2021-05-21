@@ -6,10 +6,11 @@ import {nanoid} from 'nanoid';
 
 
 export default class PointNew {
-  constructor(pointListContainer, changeData, offers) {
+  constructor(pointListContainer, changeData) {
     this._pointListContainer = pointListContainer;
     this._changeData = changeData;
-    this._offers = offers;
+    this._offers = null;
+    this._destinations = null;
 
     this._pointEditorComponent = null;
     this._resumeNewButton = null;
@@ -20,13 +21,15 @@ export default class PointNew {
   }
 
 
-  init(callback) {
-    this._resumeNewButton = callback;
+  init(resumeNewButton, offers, destinations) {
+    this._resumeNewButton = resumeNewButton;
+    this._offers = offers;
+    this._destinations = destinations;
 
     if (this._pointEditorComponent !== null) {
       return;
     }
-    this._pointEditorComponent = new PointEditorView(this._offers);
+    this._pointEditorComponent = new PointEditorView(this._offers, this._destinations);
 
     this._pointEditorComponent.setSubmitListener(this._onFormSubmit);
     this._pointEditorComponent.setDeleteListener(this._onFormDelete);

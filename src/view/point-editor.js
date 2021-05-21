@@ -2,10 +2,9 @@ import SmartView from './smart.js';
 import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
-import {types, cities, DateFormat, FlagMode, Index, Tag} from '../const.js';
+import {types, DateFormat, FlagMode, Index, Tag} from '../const.js';
 import {getRandomArrayElement} from '../utils/common.js';
 import {humanizeDate, pickElementDependOnValue, compareTwoDates} from '../utils/point.js';
-import {generatedDescriptions} from './../mock/point-data-generator.js';
 
 const ValidityMessage = {
   DESTINATION: 'Необходимо выбрать одно из предложенных направлений',
@@ -16,7 +15,7 @@ const EMPTY_POINT = {
   type: getRandomArrayElement(types),
   offers: [],
   destination: {
-    name: getRandomArrayElement(cities),
+    name: '',
     description: '',
     pictures: '',
   },
@@ -41,16 +40,17 @@ const createDestinationOptionTemplate = (cities) => {
 
 
 const createEventOfferTemplate = (type, offers, allTypeOffers) => {
+  let index = 0;
   const availableOffers = pickElementDependOnValue(type, allTypeOffers);
   return `<section class="event__section  event__section--offers">
     ${availableOffers.length > 0 ? `<h3 class="event__section-title  event__section-title--offers">Offers</h3>
     <div class="event__available-offers">
     ${availableOffers.map(({title, price}) => {
-    const offerClassName = title.split(' ').pop();
+    const offerClassName = title.split(' ').pop() + '&ndash;' + index++;
     const checkedAttribute = offers.some((offer) => offer.title === title) ? 'checked' : '';
     return `<div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerClassName}-1" type="checkbox" name="event-offer-${offerClassName}" value="${title}" ${checkedAttribute}>
-    <label class="event__offer-label" for="event-offer-${offerClassName}-1">
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerClassName}" type="checkbox" name="event-offer-${offerClassName}" value="${title}" ${checkedAttribute}>
+    <label class="event__offer-label" for="event-offer-${offerClassName}">
     <span class="event__offer-title">${title}</span>
     &plus;&euro;&nbsp;
     <span class="event__offer-price">${price}</span>
@@ -81,9 +81,8 @@ const createEventDestinationTemplate = (destination) => {
 };
 
 
-const createPointEditorTemplate = (pointData, allTypeOffers, pointMode) => {
+const createPointEditorTemplate = (pointData, allTypeOffers, cities, pointMode) => {
   const {type, dateFrom, dateTo, basePrice, offers, destination} = pointData;
-
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
       <header class="event__header">
@@ -106,7 +105,7 @@ const createPointEditorTemplate = (pointData, allTypeOffers, pointMode) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1" required placeholder="Выберите направление">
           <datalist id="destination-list-1">
             ${createDestinationOptionTemplate(cities)}
           </datalist>
@@ -144,13 +143,15 @@ const createPointEditorTemplate = (pointData, allTypeOffers, pointMode) => {
 
 
 export default class PointEditor extends SmartView {
-  constructor(offers, pointData = EMPTY_POINT, pointMode) {
+  constructor(offers, destinations, pointData = EMPTY_POINT, pointMode) {
     super();
     this._pointState = PointEditor.parsePointDataToState(pointData);
     this._offers = offers;
+    this._destinations = destinations;
     this._pointMode = pointMode;
     this._datePickerStartDate = null;
     this._datePickerExpirationDate = null;
+    this._cities = this._getPossibleCities();
 
     this._onRollUpClick = this._onRollUpClick.bind(this);
     this._onPointEditorSubmit = this._onPointEditorSubmit.bind(this);
@@ -186,7 +187,7 @@ export default class PointEditor extends SmartView {
 
 
   getTemplate() {
-    return createPointEditorTemplate(this._pointState, this._offers, this._pointMode);
+    return createPointEditorTemplate(this._pointState, this._offers, this._cities, this._pointMode);
   }
 
 
@@ -274,17 +275,22 @@ export default class PointEditor extends SmartView {
 
 
   _onPointInput(evt) {
-    if (!cities.includes(evt.target.value)) {
-      evt.target.setCustomValidity(`${ValidityMessage.DESTINATION}: ${cities.join(', ')}`);
+    if (!this._cities.includes(evt.target.value)) {
+      evt.target.setCustomValidity(`${ValidityMessage.DESTINATION}: ${this._cities.join(', ')}`);
     }
     else {
       evt.target.setCustomValidity('');
       evt.preventDefault();
       this.updateData({
-        destination: pickElementDependOnValue(evt.target.value, generatedDescriptions, FlagMode.TRUE),
+        destination: pickElementDependOnValue(evt.target.value, this._destinations, FlagMode.TRUE),
       });
     }
     evt.target.reportValidity();
+  }
+
+
+  _getPossibleCities() {
+    return this._destinations.map((destination) => destination.name);
   }
 
 

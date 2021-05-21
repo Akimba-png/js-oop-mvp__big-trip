@@ -20,7 +20,11 @@ export default class Filter {
   }
 
 
-  init(justFilterName) {
+  init(justFilterName, disableFilter) {
+    if (disableFilter) {
+      this._filterModel.removeObserver(this._onModelEvent);
+      this._pointsModel.removeObserver(this._onModelEvent);
+    }
     const filterData = this._getFilterData(justFilterName);
     const previousFilterComponent = this._filterComponent;
 
