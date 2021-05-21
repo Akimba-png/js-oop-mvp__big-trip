@@ -119,3 +119,8 @@ api.getData(DataType.DESTINATIONS).then((response) => {
   .catch(() => {
     onLoadError();
   });
+
+
+window.addEventListener('load', () => {
+  navigator.serviceWorker.register('/sw.js');
+});
