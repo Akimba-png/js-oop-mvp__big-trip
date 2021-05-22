@@ -1,8 +1,7 @@
 import PointEditorView from './../view/point-editor.js';
 import {render, remove, RenderPosition} from './../utils/render.js';
 import {isEscEvent} from './../utils/common.js';
-import {UserAction, UpdateType} from './../const.js';
-import {nanoid} from 'nanoid';
+import {UserAction, UpdateType, FlagMode} from './../const.js';
 
 
 export default class PointNew {
@@ -60,13 +59,34 @@ export default class PointNew {
   }
 
 
+  setSavingStatus() {
+    this._pointEditorComponent.updateData(
+      {
+        isSaving: FlagMode.TRUE,
+        isDisabled: FlagMode.TRUE,
+      },
+    );
+  }
+
+
+  setAbortingStatus() {
+    const resetState = () => {
+      this._pointEditorComponent.updateData({
+        isSaving: FlagMode.FALSE,
+        isDeleting: FlagMode.FALSE,
+        isDisabled: FlagMode.FALSE,
+      });
+    };
+    this._pointEditorComponent.shake(resetState);
+  }
+
+
   _onFormSubmit(point) {
     this._changeData(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      Object.assign({id: nanoid()}, point),
+      point,
     );
-    this.destroy();
   }
 
 

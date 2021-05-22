@@ -4,6 +4,8 @@ import {DataType} from './const.js';
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
 };
 
 const SuccessStatusRange = {
@@ -39,6 +41,26 @@ export default class Api {
     })
       .then(Api.toJSON)
       .then(PointsModel.adaptToClient);
+  }
+
+
+  addPoint(point) {
+    return this._load({
+      url: DataType.POINTS,
+      method: Method.POST,
+      body: JSON.stringify(PointsModel.adaptToServer(point)),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    })
+      .then(Api.toJSON)
+      .then(PointsModel.adaptToClient);
+  }
+
+
+  deletePoint(point) {
+    return this._load({
+      url: `${DataType.POINTS}/${point.id}`,
+      method: Method.DELETE,
+    });
   }
 
 

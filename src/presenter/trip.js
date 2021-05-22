@@ -1,4 +1,4 @@
-import PointPresenter from './point.js';
+import PointPresenter, {FormState as PointPresenterFormState} from './point.js';
 import PointNewPresenter from './point-new.js';
 import TripInfoView from './../view/trip-info.js';
 import TripCostView from './../view/trip-cost.js';
@@ -36,6 +36,7 @@ export default class Trip {
 
     this._offers = null;
     this._destinations = null;
+    this._resumeNewButton = null;
 
     this._currentSortType = SortType.DATE;
 
@@ -48,7 +49,8 @@ export default class Trip {
   }
 
 
-  init() {
+  init(resumeNewButton) {
+    this._resumeNewButton = resumeNewButton;
     render(this._tripContainer, this._pointListComponent);
     this._pointsModel.addObserver(this._onModelEvent);
     this._offersModel.addObserver(this._onModelEvent);
@@ -68,8 +70,8 @@ export default class Trip {
   }
 
 
-  createPoint(resumeNewButton) {
-    this._pointNewPresenter.init(resumeNewButton, this._offers, this._destinations);
+  createPoint() {
+    this._pointNewPresenter.init(this._resumeNewButton, this._offers, this._destinations);
   }
 
 
@@ -99,15 +101,28 @@ export default class Trip {
   _onViewAction(actionType, updateType, updatedPoint) {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
+        this._pointPresenter[updatedPoint.id].setViewFormState(PointPresenterFormState.SAVING);
         this._api.updatePoint(updatedPoint).then((response) => {
           this._pointsModel.updatePoint(updateType, response);
+        }).catch(() => {
+          this._pointPresenter[updatedPoint.id].setViewFormState(PointPresenterFormState.ABORTING);
         });
         break;
       case UserAction.ADD_POINT:
-        this._pointsModel.addPoint(updateType, updatedPoint);
+        this._pointNewPresenter.setSavingStatus();
+        this._api.addPoint(updatedPoint).then((response) => {
+          this._pointsModel.addPoint(updateType, response);
+        }).catch(() => {
+          this._pointNewPresenter.setAbortingStatus();
+        });
         break;
       case UserAction.DELETE_POINT:
-        this._pointsModel.deletePoint(updateType, updatedPoint);
+        this._pointPresenter[updatedPoint.id].setViewFormState(PointPresenterFormState.DELETING);
+        this._api.deletePoint(updatedPoint).then(() => {
+          this._pointsModel.deletePoint(updateType, updatedPoint);
+        }).catch(() => {
+          this._pointPresenter[updatedPoint.id].setViewFormState(PointPresenterFormState.ABORTING);
+        });
         break;
       default:
         throw new Error('Unknown action-type. Check UserAction value');
@@ -232,7 +247,9 @@ export default class Trip {
       return;
     }
     remove(this._loadingComponent);
-
+    if (!this._isLoadingOffers && !this._isLoadingDestinations) {
+      this._resumeNewButton();
+    }
     const points = this._getPoints();
     if (points.length === 0) {
       this._renderListEmpty();

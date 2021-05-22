@@ -1,5 +1,5 @@
 import Observer from './../utils/observer.js';
-import {Index} from './../const.js';
+import {FlagMode, Index} from './../const.js';
 
 export default class Points extends Observer {
   constructor() {
@@ -78,7 +78,7 @@ export default class Points extends Observer {
         'base_price': point.basePrice,
         'date_from': point.dateFrom instanceof Date ? point.dateFrom.toISOString() : null,
         'date_to': point.dateTo instanceof Date ? point.dateTo.toISOString() : null,
-        'is_favorite': point.isFavorite,
+        'is_favorite': point.isFavorite !== undefined ? point.isFavorite : FlagMode.FALSE,
       },
     );
     delete adaptedPoint.basePrice;

@@ -12,7 +12,7 @@ import Api from './api.js';
 import {render, remove} from './utils/render.js';
 import {MenuItem, UpdateType, FilterType, FlagMode, DataType} from './const.js';
 
-const AUTHORIZATION_KEY = 'Basic 4agPYxDu3DyHxrKWBcdGEH';
+const AUTHORIZATION_KEY = 'Basic 3agPYxDu3DyHxrKWBcdGEH';
 const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
 
 const siteBodyElement = document.querySelector('.page-body');
@@ -43,7 +43,7 @@ let loadStatus = FlagMode.TRUE;
 let statisticsComponent = null;
 
 const onNewPointClose = () => {
-  buttonNewComponent.toggleDisabledStatus();
+  buttonNewComponent.setEnabledStatus();
 };
 
 const onMenuClick = (menuItem) => {
@@ -51,23 +51,23 @@ const onMenuClick = (menuItem) => {
     case MenuItem.NEW_EVENT:
       tripPresenter.destroy();
       filterModel.setActiveFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-      tripPresenter.init();
-      tripPresenter.createPoint(onNewPointClose);
-      buttonNewComponent.toggleDisabledStatus();
+      tripPresenter.init(onNewPointClose);
+      tripPresenter.createPoint();
+      buttonNewComponent.setDisabledStatus();
       break;
     case MenuItem.TABLE:
       remove(statisticsComponent);
       filterModel.setActiveFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-      tripPresenter.init();
+      tripPresenter.init(onNewPointClose);
       filterPresenter.init();
-      buttonNewComponent.toggleDisabledStatus();
+      buttonNewComponent.setEnabledStatus();
       headerElement.classList.toggle('page-header__container--statistics');
       mainElement.classList.toggle('page-main__container--statistics');
       break;
     case MenuItem.STATS:
       filterPresenter.init(FlagMode.TRUE);
       tripPresenter.destroy();
-      buttonNewComponent.toggleDisabledStatus();
+      buttonNewComponent.setDisabledStatus();
       headerElement.classList.toggle('page-header__container--statistics');
       mainElement.classList.toggle('page-main__container--statistics');
       statisticsComponent = new StatisticsView(pointsModel.getPoints());
@@ -90,7 +90,7 @@ const onLoadError = () => {
   buttonNewComponent.setDisabledStatus();
 };
 
-tripPresenter.init();
+tripPresenter.init(onNewPointClose);
 filterPresenter.init();
 
 api.getData(DataType.POINTS).then((response) => {
@@ -107,7 +107,6 @@ api.getData(DataType.POINTS).then((response) => {
 
 api.getData(DataType.OFFERS).then((response) => {
   offersModel.setOffers(UpdateType.INIT_OFFERS, response);
-  buttonNewComponent.setEnabledStatus();
 })
   .catch(() => {
     onLoadError();
@@ -116,7 +115,6 @@ api.getData(DataType.OFFERS).then((response) => {
 
 api.getData(DataType.DESTINATIONS).then((response) => {
   destinationsModel.setDestinations(UpdateType.INIT_DESTINATIONS, response);
-  buttonNewComponent.setEnabledStatus();
 })
   .catch(() => {
     onLoadError();

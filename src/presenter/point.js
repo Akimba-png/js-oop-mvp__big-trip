@@ -3,10 +3,16 @@ import PointEditorView from './../view/point-editor.js';
 import {render, replace, remove} from './../utils/render.js';
 import {isEscEvent} from './../utils/common.js';
 import {isDateTheSame, isOffersTheSame} from './../utils/point.js';
-import {UserAction, UpdateType} from './../const.js';
+import {UserAction, UpdateType, FlagMode} from './../const.js';
 import {pickElementDependOnValue} from '../utils/point.js';
 
 const EDIT_MODE = 'edit_mode';
+
+export const FormState = {
+  ABORTING: 'aborting',
+  SAVING: 'saving',
+  DELETING: 'deleting',
+};
 
 const Mode = {
   POINT: 'point',
@@ -64,6 +70,7 @@ export default class Point {
 
     if (this._pointMode === Mode.EDITOR) {
       replace(this._pointComponent, previousPointEditorComponent);
+      this._pointMode = Mode.POINT;
     }
 
 
@@ -80,6 +87,37 @@ export default class Point {
   destroy() {
     remove(this._pointComponent);
     remove(this._pointEditorComponent);
+  }
+
+
+  setViewFormState(state) {
+    const resetState = () => {
+      this._pointEditorComponent.updateData({
+        isSaving: FlagMode.FALSE,
+        isDeleting: FlagMode.FALSE,
+        isDisabled: FlagMode.FALSE,
+      });
+    };
+    switch (state) {
+      case FormState.SAVING:
+        this._pointEditorComponent.updateData({
+          isSaving: FlagMode.TRUE,
+          isDisabled: FlagMode.TRUE,
+        });
+        break;
+      case FormState.DELETING:
+        this._pointEditorComponent.updateData({
+          isDeleting: FlagMode.TRUE,
+          isDisabled: FlagMode.TRUE,
+        });
+        break;
+      case FormState.ABORTING:
+        this._pointComponent.shake(resetState);
+        this._pointEditorComponent.shake(resetState);
+        break;
+      default:
+        throw new Error('Unknown form-state. Check FormState value');
+    }
   }
 
 
@@ -115,8 +153,6 @@ export default class Point {
 
 
   _onFormSubmit(point) {
-    this._changeViewToPoint();
-
     const isMinorUpdate = (!isDateTheSame(this._point.dateFrom, point.dateFrom) ||
     !isDateTheSame(this._point.dateTo, point.dateTo) ||
     !(this._point.basePrice === point.basePrice)) || !isOffersTheSame(this._point, point);

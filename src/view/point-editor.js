@@ -6,6 +6,8 @@ import {types, DateFormat, FlagMode, Index, Tag} from '../const.js';
 import {getRandomArrayElement} from '../utils/common.js';
 import {humanizeDate, pickElementDependOnValue, compareTwoDates} from '../utils/point.js';
 
+const TIME_GAP = 5;
+
 const ValidityMessage = {
   DESTINATION: 'Необходимо выбрать одно из предложенных направлений',
   PRICE: 'Без цифр не отдохнуть(',
@@ -20,7 +22,7 @@ const EMPTY_POINT = {
     pictures: '',
   },
   dateFrom: dayjs().toDate(),
-  dateTo: dayjs().toDate(),
+  dateTo: dayjs().add(TIME_GAP, 'm').toDate(),
   basePrice: '',
 };
 
@@ -39,7 +41,7 @@ const createDestinationOptionTemplate = (cities) => {
 };
 
 
-const createEventOfferTemplate = (type, offers, allTypeOffers) => {
+const createEventOfferTemplate = (type, offers, allTypeOffers, isDisabled) => {
   let index = 0;
   const availableOffers = pickElementDependOnValue(type, allTypeOffers);
   return `<section class="event__section  event__section--offers">
@@ -49,7 +51,7 @@ const createEventOfferTemplate = (type, offers, allTypeOffers) => {
     const offerClassName = title.split(' ').pop() + '&ndash;' + index++;
     const checkedAttribute = offers.some((offer) => offer.title === title) ? 'checked' : '';
     return `<div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerClassName}" type="checkbox" name="event-offer-${offerClassName}" value="${title}" ${checkedAttribute}>
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerClassName}" type="checkbox" name="event-offer-${offerClassName}" value="${title}" ${checkedAttribute} ${isDisabled ? 'disabled' : ''}>
     <label class="event__offer-label" for="event-offer-${offerClassName}">
     <span class="event__offer-title">${title}</span>
     &plus;&euro;&nbsp;
@@ -82,7 +84,7 @@ const createEventDestinationTemplate = (destination) => {
 
 
 const createPointEditorTemplate = (pointData, allTypeOffers, cities, pointMode) => {
-  const {type, dateFrom, dateTo, basePrice, offers, destination} = pointData;
+  const {type, dateFrom, dateTo, basePrice, offers, destination, isSaving, isDeleting, isDisabled} = pointData;
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
       <header class="event__header">
@@ -91,7 +93,7 @@ const createPointEditorTemplate = (pointData, allTypeOffers, cities, pointMode) 
             <span class="visually-hidden">Choose event type</span>
             <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
           </label>
-          <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+          <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${isDisabled ? 'disabled' : ''}>
 
           <div class="event__type-list">
             <fieldset class="event__type-group">
@@ -105,7 +107,7 @@ const createPointEditorTemplate = (pointData, allTypeOffers, cities, pointMode) 
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1" required placeholder="Выберите направление">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1" required placeholder="Выберите направление" ${isDisabled ? 'disabled' : ''}>
           <datalist id="destination-list-1">
             ${createDestinationOptionTemplate(cities)}
           </datalist>
@@ -113,10 +115,10 @@ const createPointEditorTemplate = (pointData, allTypeOffers, cities, pointMode) 
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${humanizeDate(dateFrom, DateFormat.DATE_HOUR)}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${humanizeDate(dateFrom, DateFormat.DATE_HOUR)}" ${isDisabled ? 'disabled' : ''}>
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${humanizeDate(dateTo, DateFormat.DATE_HOUR)}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${humanizeDate(dateTo, DateFormat.DATE_HOUR)}" ${isDisabled ? 'disabled' : ''}>
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -124,17 +126,17 @@ const createPointEditorTemplate = (pointData, allTypeOffers, cities, pointMode) 
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" minlength="1" name="event-price" value="${basePrice}" required>
+          <input class="event__input  event__input--price" id="event-price-1" type="text" minlength="1" name="event-price" value="${basePrice}" required ${isDisabled ? 'disabled' : ''}>
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">${pointMode ? 'Delete' : 'Cancel'}</button>
-        ${pointMode ? `<button class="event__rollup-btn" type="button">
+        <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
+        <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${isDeleting ? 'Deleting...' : pointMode ? 'Delete' : 'Cancel'}</button>
+        ${pointMode ? `<button class="event__rollup-btn" type="button" ${isDisabled ? 'disabled' : ''}>
         <span class="visually-hidden">Open event</span>
         </button>` : ''}
       </header>
       <section class="event__details">
-        ${createEventOfferTemplate(type, offers, allTypeOffers)}
+        ${createEventOfferTemplate(type, offers, allTypeOffers, isDisabled)}
         ${createEventDestinationTemplate(destination)}
       </section>
     </form>
@@ -173,6 +175,11 @@ export default class PointEditor extends SmartView {
     return Object.assign(
       {},
       pointData,
+      {
+        isSaving: FlagMode.FALSE,
+        isDeleting: FlagMode.FALSE,
+        isDisabled: FlagMode.FALSE,
+      },
     );
   }
 
@@ -182,6 +189,9 @@ export default class PointEditor extends SmartView {
       {},
       state,
     );
+    delete state.isSaving;
+    delete state.isDeleting;
+    delete state.isDisabled;
     return state;
   }
 
@@ -306,17 +316,22 @@ export default class PointEditor extends SmartView {
         {
           dateFormat: 'd/m/y H:i',
           defaultDate: this._pointState.dateFrom,
+          enableTime: FlagMode.TRUE,
+          time_24hr: FlagMode.TRUE,
           onChange: this._onDateFromChange,
         },
       );
       return;
     }
 
-    datePicker = flatpickr(
+    datePicker  = flatpickr(
       this.getElement().querySelector('#event-end-time-1'),
       {
         dateFormat: 'd/m/y H:i',
         defaultDate: this._pointState.dateTo,
+        enableTime: FlagMode.TRUE,
+        time_24hr: FlagMode.TRUE,
+        minDate: dayjs(this._pointState.dateFrom).add(TIME_GAP, 'm').toDate(),
         onChange: this._onDateToChange,
       },
     );
@@ -326,23 +341,20 @@ export default class PointEditor extends SmartView {
   _onDateFromChange(userInput) {
     if (compareTwoDates(this._pointState.dateTo, userInput) < 0) {
       this.updateData({
-        dateFrom: userInput,
-        dateTo: userInput,
+        dateFrom: dayjs(userInput).toDate(),
+        dateTo: dayjs(userInput).add(TIME_GAP, 'm').toDate(),
       });
       return;
     }
     this.updateData({
-      dateFrom: userInput,
+      dateFrom: dayjs(userInput).toDate(),
     });
   }
 
 
   _onDateToChange(userInput) {
-    if (compareTwoDates(userInput, this._pointState.dateFrom) < 0) {
-      userInput = this._pointState.dateFrom;
-    }
     this.updateData({
-      dateTo: userInput,
+      dateTo: dayjs(userInput).toDate(),
     });
   }
 
