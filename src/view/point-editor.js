@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import {types, DateFormat, FlagMode, Index, Tag} from '../const.js';
-import {getRandomArrayElement} from '../utils/common.js';
+import {getRandomArrayElement, isOnline} from '../utils/common.js';
 import {humanizeDate, pickElementDependOnValue, compareTwoDates} from '../utils/point.js';
 
 const TIME_GAP = 5;
@@ -64,13 +64,17 @@ const createEventOfferTemplate = (type, offers, allTypeOffers, isDisabled) => {
 
 
 const createPhotoContainer = (destination) => {
-  return destination.pictures.length > 0 ?
+  if (isOnline()) {
+    console.log('online')
+    return destination.pictures.length > 0 ?
     `<div class="event__photos-container">
     <div class="event__photos-tape">
     ${destination.pictures.map((photo) =>
     `<img class="event__photo" src="${photo.src}" alt="Event photo"></img>`).join('')}
     </div></div>`
     : '';
+  } console.log('offline');
+  return '';
 };
 
 

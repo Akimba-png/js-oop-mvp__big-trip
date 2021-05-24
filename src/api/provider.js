@@ -28,16 +28,33 @@ export default class Provider {
   }
 
 
-  getData() {
+  getData(dataType) {
+    console.log(isOnline())
+
+    if (dataType === DataType.POINTS) {
+      if (isOnline()) {
+      console.log(isOnline())
+        return this._api.getData(dataType).then((points) => {
+          console.log(points)
+          const storeItems = createStoreStructure(points.map(PointsModel.adaptToServer));
+          this._store.setItems(storeItems);
+          return points;
+        });
+      }
+      const storePoints = Object.values(this._store.getItems());
+      return Promise.resolve(storePoints.map(PointsModel.adaptToClient));
+    }
+
     if (isOnline()) {
-      return this._api.getData(DataType.POINTS).then((points) => {
-        const storeItems = createStoreStructure(points.map(PointsModel.adaptToServer));
-        this._store.setItems(storeItems);
-        return points;
+      return this._api.getData(dataType).then((items) => {
+        // const storeItems = createStoreStructure(items);
+        this._store.setItems(items);
+        return items;
       });
     }
-    const storePoints = Object.values(this._store.getItems());
-    return Promise.resolve(storePoints.map(PointsModel.adaptToClient));
+    const storeItems = this._store.getItems();
+    console.log(storeItems)
+    return Promise.resolve(storeItems);
   }
 
 

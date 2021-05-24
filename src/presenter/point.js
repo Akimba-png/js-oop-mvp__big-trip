@@ -1,10 +1,11 @@
 import PointView from './../view/point.js';
 import PointEditorView from './../view/point-editor.js';
 import {render, replace, remove} from './../utils/render.js';
-import {isEscEvent} from './../utils/common.js';
+import {isEscEvent, isOnline} from './../utils/common.js';
 import {isDateTheSame, isOffersTheSame} from './../utils/point.js';
 import {UserAction, UpdateType, FlagMode} from './../const.js';
 import {pickElementDependOnValue} from '../utils/point.js';
+import {toast} from './../utils/toast.js';
 
 const EDIT_MODE = 'edit_mode';
 
@@ -153,6 +154,10 @@ export default class Point {
 
 
   _onFormSubmit(point) {
+    if (!isOnline()) {
+      toast('You can\'t save task offline');
+      return;
+    }
     const isMinorUpdate = (!isDateTheSame(this._point.dateFrom, point.dateFrom) ||
     !isDateTheSame(this._point.dateTo, point.dateTo) ||
     !(this._point.basePrice === point.basePrice)) || !isOffersTheSame(this._point, point);
