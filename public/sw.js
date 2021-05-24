@@ -60,8 +60,6 @@ self.addEventListener('activate', (evt) => {
 
 
 const onFetch = (evt) => {
-  console.log('запрос')
-  console.log(evt)
   const {request} = evt;
 
   evt.respondWith(

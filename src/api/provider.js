@@ -29,13 +29,9 @@ export default class Provider {
 
 
   getData(dataType) {
-    console.log(isOnline())
-
     if (dataType === DataType.POINTS) {
       if (isOnline()) {
-      console.log(isOnline())
         return this._api.getData(dataType).then((points) => {
-          console.log(points)
           const storeItems = createStoreStructure(points.map(PointsModel.adaptToServer));
           this._store.setItems(storeItems);
           return points;
@@ -44,16 +40,13 @@ export default class Provider {
       const storePoints = Object.values(this._store.getItems());
       return Promise.resolve(storePoints.map(PointsModel.adaptToClient));
     }
-
     if (isOnline()) {
       return this._api.getData(dataType).then((items) => {
-        // const storeItems = createStoreStructure(items);
         this._store.setItems(items);
         return items;
       });
     }
     const storeItems = this._store.getItems();
-    console.log(storeItems)
     return Promise.resolve(storeItems);
   }
 
@@ -95,7 +88,7 @@ export default class Provider {
       return this._api.sync(storePoints).then((response) => {
         const createdPoints = getSyncedPoints(response.created);
         const updatedPoints = getSyncedPoints(response.updated);
-        const items = creatSeStoreStructure([...createdPoints, ...updatedPoints]);
+        const items = createStoreStructure([...createdPoints, ...updatedPoints]);
         this._store.setItems(items);
       });
     }

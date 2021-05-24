@@ -1,7 +1,8 @@
 import PointEditorView from './../view/point-editor.js';
 import {render, remove, RenderPosition} from './../utils/render.js';
-import {isEscEvent} from './../utils/common.js';
+import {isEscEvent, isOnline} from './../utils/common.js';
 import {UserAction, UpdateType, FlagMode} from './../const.js';
+import {toast} from './../utils/toast.js';
 
 
 export default class PointNew {
@@ -82,6 +83,9 @@ export default class PointNew {
 
 
   _onFormSubmit(point) {
+    if (!isOnline()) {
+      toast();
+    }
     this._changeData(
       UserAction.ADD_POINT,
       UpdateType.MINOR,

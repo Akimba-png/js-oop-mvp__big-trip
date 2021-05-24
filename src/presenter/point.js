@@ -146,6 +146,10 @@ export default class Point {
 
 
   _changeViewToEdit() {
+    if (!isOnline()) {
+      toast();
+      return;
+    }
     replace(this._pointEditorComponent, this._pointComponent);
     document.addEventListener('keydown', this._onEditorPointEscKeydown);
     this._changeMode();
@@ -155,7 +159,9 @@ export default class Point {
 
   _onFormSubmit(point) {
     if (!isOnline()) {
-      toast('You can\'t save task offline');
+      toast();
+      this.setViewFormState(FormState.SAVING);
+      this.setViewFormState(FormState.ABORTING);
       return;
     }
     const isMinorUpdate = (!isDateTheSame(this._point.dateFrom, point.dateFrom) ||
@@ -171,6 +177,9 @@ export default class Point {
 
 
   _onFormDelete(point) {
+    if (!isOnline()) {
+      toast();
+    }
     this._changeData(
       UserAction.DELETE_POINT,
       UpdateType.MINOR,

@@ -65,7 +65,6 @@ const createEventOfferTemplate = (type, offers, allTypeOffers, isDisabled) => {
 
 const createPhotoContainer = (destination) => {
   if (isOnline()) {
-    console.log('online')
     return destination.pictures.length > 0 ?
     `<div class="event__photos-container">
     <div class="event__photos-tape">
@@ -73,7 +72,7 @@ const createPhotoContainer = (destination) => {
     `<img class="event__photo" src="${photo.src}" alt="Event photo"></img>`).join('')}
     </div></div>`
     : '';
-  } console.log('offline');
+  }
   return '';
 };
 
