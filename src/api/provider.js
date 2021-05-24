@@ -10,7 +10,7 @@ const createStoreStructure = (storeItems) => {
       accumulator,
       {
         [current.id]: current,
-      }
+      },
     );
   }, {});
 };
@@ -56,7 +56,7 @@ export default class Provider {
       return this._api.updatePoint(point).then((updatedPoint) => {
         this._store.setItem(updatedPoint.id, PointsModel.adaptToServer(updatedPoint));
         return updatedPoint;
-      })
+      });
     }
     this._store.setItem(point.id, PointsModel.adaptToServer(Object.assign({}, point)));
     return Promise.resolve(point);

@@ -6,7 +6,7 @@ document.body.append(toastContainer);
 
 export const toast = () => {
   const toastItem = document.createElement('div');
-  toastItem.textContent = 'can\`t do it in offline';
+  toastItem.textContent = 'can\'t do it in offline';
   toastItem.classList.add('toast-item');
   toastContainer.append(toastItem);
   setTimeout(() => {

@@ -5,9 +5,6 @@ export default class Store {
   }
 
 
-  // Заменить items на points, offers?
-  // добавить методы getOffers, getDestinations?
-
   getItems() {
     try {
       return JSON.parse(this._storage.getItem(this._storeKey)) || {};
@@ -29,7 +26,7 @@ export default class Store {
         {
           [key]: value,
         },
-      )
+      ),
     ));
   }
 

@@ -16,7 +16,7 @@ import {MenuItem, UpdateType, FilterType, FlagMode, DataType} from './const.js';
 import {isOnline} from './utils/common.js';
 import {toast} from './utils/toast.js';
 
-const AUTHORIZATION_KEY = 'Basic 21agPYxDu3DyHxrKWBcdGEH';
+const AUTHORIZATION_KEY = 'Basic 22agPYxDu3DyHxrKWBcdGEH';
 const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
 
 const STORE_VERSION = 'v1';
