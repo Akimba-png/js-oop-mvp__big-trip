@@ -8,12 +8,17 @@ import PointsModel from './model/points.js';
 import FilterModel from './model/filter.js';
 import OffersModel from './model/offers.js';
 import DestinationsModel from './model/destinations.js';
-import Api from './api.js';
+import Api from './api/api.js';
+import Store from './api/store.js';
+import Provider from './api/provider.js';
 import {render, remove} from './utils/render.js';
 import {MenuItem, UpdateType, FilterType, FlagMode, DataType} from './const.js';
 
 const AUTHORIZATION_KEY = 'Basic 3agPYxDu3DyHxrKWBcdGEH';
 const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
+const STORE_PREFIX = 'bigtrip-localstorage';
+const STORE_VERSION = 'v1';
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VERSION}`;
 
 const siteBodyElement = document.querySelector('.page-body');
 const headerElement = siteBodyElement.querySelector('.page-header__container');
@@ -24,6 +29,8 @@ const tripDetailsElement = siteBodyElement.querySelector('.trip-main');
 const tripBoardElement = siteBodyElement.querySelector('.trip-events');
 
 const api = new Api(END_POINT, AUTHORIZATION_KEY);
+const store = new Store(STORE_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, store);
 
 const offersModel = new OffersModel();
 const pointsModel = new PointsModel();
@@ -36,7 +43,7 @@ const buttonNewComponent = new ButtonNewView();
 render(tripDetailsElement, buttonNewComponent);
 const errorView = new ErrorView();
 
-const tripPresenter = new TripPresenter(tripBoardElement, tripDetailsElement, pointsModel, filterModel, offersModel, destinationsModel, api);
+const tripPresenter = new TripPresenter(tripBoardElement, tripDetailsElement, pointsModel, filterModel, offersModel, destinationsModel, apiWithProvider);
 const filterPresenter = new FilterPresenter(filterElement, filterModel, pointsModel);
 
 let loadStatus = FlagMode.TRUE;
@@ -93,7 +100,7 @@ const onLoadError = () => {
 tripPresenter.init(onNewPointClose);
 filterPresenter.init();
 
-api.getData(DataType.POINTS).then((response) => {
+apiWithProvider.getData().then((response) => {
   pointsModel.setPoints(UpdateType.INIT_POINTS, response);
   mainMenuComponent.setMenuListener(onMenuClick);
   buttonNewComponent.setButtonNewListener(onMenuClick);
@@ -123,4 +130,15 @@ api.getData(DataType.DESTINATIONS).then((response) => {
 
 window.addEventListener('load', () => {
   navigator.serviceWorker.register('/sw.js');
+});
+
+
+window.addEventListener('online', () => {
+  document.title = document.title.replace(' [offline]', '');
+  apiWithProvider.sync();
+});
+
+
+window.addEventListener('offline', () => {
+  document.title += ' [offline]';
 });
