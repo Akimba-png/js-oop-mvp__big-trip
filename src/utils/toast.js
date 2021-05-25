@@ -1,15 +1,29 @@
 const SHOW_TIME = 5000;
 
-const toastContainer = document.createElement('div');
-toastContainer.classList.add('toast-container');
-document.body.append(toastContainer);
+const toastContainerElement = document.createElement('div');
+toastContainerElement.classList.add('toast-container');
+document.body.append(toastContainerElement);
 
 export const toast = () => {
-  const toastItem = document.createElement('div');
-  toastItem.textContent = 'can\'t do it in offline';
-  toastItem.classList.add('toast-item');
-  toastContainer.append(toastItem);
+  const toastItemElement = document.createElement('div');
+  toastItemElement.textContent = 'can\'t do it in offline';
+  toastItemElement.classList.add('toast-container__item');
+  toastContainerElement.append(toastItemElement);
   setTimeout(() => {
-    toastItem.remove();
+    toastItemElement.remove();
   }, SHOW_TIME);
+};
+
+export const toastPermanent = () => {
+  const toastItemElement = document.createElement('div');
+  toastItemElement.textContent = 'we are offline';
+  toastItemElement.classList.add('toast-container__item', 'toast-container__item--permanent');
+  toastContainerElement.append(toastItemElement);
+};
+
+export const toastRemove = () => {
+  const toastItemElement = toastContainerElement.querySelector('.toast-container__item--permanent');
+  if (toastItemElement) {
+    toastItemElement.remove();
+  }
 };

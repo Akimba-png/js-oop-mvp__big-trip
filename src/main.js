@@ -14,9 +14,9 @@ import Provider from './api/provider.js';
 import {render, remove} from './utils/render.js';
 import {MenuItem, UpdateType, FilterType, FlagMode, DataType} from './const.js';
 import {isOnline} from './utils/common.js';
-import {toast} from './utils/toast.js';
+import {toast, toastPermanent, toastRemove} from './utils/toast.js';
 
-const AUTHORIZATION_KEY = 'Basic 22agPYxDu3DyHxrKWBcdGEH';
+const AUTHORIZATION_KEY = 'Basic 2agPYxDu3DyHxrKWBcdGEH';
 const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
 
 const STORE_VERSION = 'v1';
@@ -147,15 +147,20 @@ apiWithProviderDestination.getData(DataType.DESTINATIONS).then((response) => {
 
 window.addEventListener('load', () => {
   navigator.serviceWorker.register('/sw.js');
+  if (!isOnline()) {
+    toastPermanent();
+  }
 });
 
 
 window.addEventListener('online', () => {
   document.title = document.title.replace(' [offline]', '');
   apiWithProvider.sync();
+  toastRemove();
 });
 
 
 window.addEventListener('offline', () => {
   document.title += ' [offline]';
+  toastPermanent();
 });

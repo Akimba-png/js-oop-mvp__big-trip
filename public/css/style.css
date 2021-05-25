@@ -1038,11 +1038,17 @@ main {
   box-sizing: border-box;
 }
 
-.toast-item {
+.toast-container__item {
   display: inline-flex;
   margin-bottom: 0.4em;
   padding: 0.4em;
   border-radius: 0.2em;
   background-color: #f2f2f2;
   color: #fc036f;
+}
+
+.toast-container__item--permanent {
+  font-size: 22px;
+  font-weight: bold;
+  text-transform: uppercase;
 }
