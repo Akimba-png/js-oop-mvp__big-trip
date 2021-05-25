@@ -14,3 +14,8 @@ export const getRandomArrayElement = (array) => {
 export const isEscEvent = (evt) => {
   return evt.key === ('Escape' || 'Esc');
 };
+
+
+export const isOnline = () => {
+  return window.navigator.onLine;
+};

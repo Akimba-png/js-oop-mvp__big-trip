@@ -1,10 +1,11 @@
 import PointView from './../view/point.js';
 import PointEditorView from './../view/point-editor.js';
 import {render, replace, remove} from './../utils/render.js';
-import {isEscEvent} from './../utils/common.js';
+import {isEscEvent, isOnline} from './../utils/common.js';
 import {isDateTheSame, isOffersTheSame} from './../utils/point.js';
 import {UserAction, UpdateType, FlagMode} from './../const.js';
 import {pickElementDependOnValue} from '../utils/point.js';
+import {toast} from './../utils/toast.js';
 
 const EDIT_MODE = 'edit_mode';
 
@@ -145,6 +146,10 @@ export default class Point {
 
 
   _changeViewToEdit() {
+    if (!isOnline()) {
+      toast();
+      return;
+    }
     replace(this._pointEditorComponent, this._pointComponent);
     document.addEventListener('keydown', this._onEditorPointEscKeydown);
     this._changeMode();
@@ -153,6 +158,12 @@ export default class Point {
 
 
   _onFormSubmit(point) {
+    if (!isOnline()) {
+      toast();
+      this.setViewFormState(FormState.SAVING);
+      this.setViewFormState(FormState.ABORTING);
+      return;
+    }
     const isMinorUpdate = (!isDateTheSame(this._point.dateFrom, point.dateFrom) ||
     !isDateTheSame(this._point.dateTo, point.dateTo) ||
     !(this._point.basePrice === point.basePrice)) || !isOffersTheSame(this._point, point);
@@ -166,6 +177,9 @@ export default class Point {
 
 
   _onFormDelete(point) {
+    if (!isOnline()) {
+      toast();
+    }
     this._changeData(
       UserAction.DELETE_POINT,
       UpdateType.MINOR,
