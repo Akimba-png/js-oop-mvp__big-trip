@@ -146,7 +146,7 @@ apiWithProviderDestination.getData(DataType.DESTINATIONS).then((response) => {
 
 
 window.addEventListener('load', () => {
-  navigator.serviceWorker.register('sw.js');
+  navigator.serviceWorker.register('/1061909-big-trip-14/16/sw.js');
   if (!isOnline()) {
     toastPermanent();
   }
