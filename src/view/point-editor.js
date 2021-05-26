@@ -174,49 +174,8 @@ export default class PointEditor extends SmartView {
   }
 
 
-  static parsePointDataToState(pointData) {
-    return Object.assign(
-      {},
-      pointData,
-      {
-        isSaving: FlagMode.FALSE,
-        isDeleting: FlagMode.FALSE,
-        isDisabled: FlagMode.FALSE,
-      },
-    );
-  }
-
-
-  static parseStateToPointData(state) {
-    state = Object.assign(
-      {},
-      state,
-    );
-    delete state.isSaving;
-    delete state.isDeleting;
-    delete state.isDisabled;
-    return state;
-  }
-
-
   getTemplate() {
     return createPointEditorTemplate(this._pointState, this._offers, this._cities, this._pointMode);
-  }
-
-
-  removeElement() {
-    super.removeElement();
-    if (this._datePickerStartDate || this._datePickerExpirationDate) {
-      this._datePickerStartDate.destroy();
-      this._datePickerStartDate = null;
-      this._datePickerExpirationDate.destroy();
-      this._datePickerExpirationDate = null;
-    }
-  }
-
-
-  resetInput(pointData) {
-    this.updateData(PointEditor.parsePointDataToState(pointData));
   }
 
 
@@ -240,6 +199,53 @@ export default class PointEditor extends SmartView {
   }
 
 
+  _setInnerListeners() {
+    this.getElement().querySelector('.event__type-group').addEventListener('change', this._onPointTypeChange);
+    this.getElement().querySelector('.event__input--destination').addEventListener('change', this._onPointInput);
+    this.getElement().querySelector('.event__input--price').addEventListener('change', this._onPriceChange);
+    this.getElement().querySelector('.event__section--offers').addEventListener('change', this._onOfferChange);
+  }
+
+
+  _getPossibleCities() {
+    return this._destinations.map((destination) => destination.name);
+  }
+
+
+  _setDatePicker(datePicker, flag) {
+    if (datePicker) {
+      datePicker.destroy();
+      datePicker = null;
+    }
+
+    if (flag) {
+      datePicker = flatpickr(
+        this.getElement().querySelector('#event-start-time-1'),
+        {
+          dateFormat: 'd/m/y H:i',
+          defaultDate: this._pointState.dateFrom,
+          enableTime: FlagMode.TRUE,
+          time_24hr: FlagMode.TRUE,
+          onChange: this._onDateFromChange,
+        },
+      );
+      return;
+    }
+
+    datePicker  = flatpickr(
+      this.getElement().querySelector('#event-end-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._pointState.dateTo,
+        enableTime: FlagMode.TRUE,
+        time_24hr: FlagMode.TRUE,
+        minDate: dayjs(this._pointState.dateFrom).add(TIME_GAP, 'm').toDate(),
+        onChange: this._onDateToChange,
+      },
+    );
+  }
+
+
   restoreListeners() {
     this._setInnerListeners();
     this.setRollUpClickListener(this._callback.rollUpClick);
@@ -250,11 +256,19 @@ export default class PointEditor extends SmartView {
   }
 
 
-  _setInnerListeners() {
-    this.getElement().querySelector('.event__type-group').addEventListener('change', this._onPointTypeChange);
-    this.getElement().querySelector('.event__input--destination').addEventListener('change', this._onPointInput);
-    this.getElement().querySelector('.event__input--price').addEventListener('change', this._onPriceChange);
-    this.getElement().querySelector('.event__section--offers').addEventListener('change', this._onOfferChange);
+  removeElement() {
+    super.removeElement();
+    if (this._datePickerStartDate || this._datePickerExpirationDate) {
+      this._datePickerStartDate.destroy();
+      this._datePickerStartDate = null;
+      this._datePickerExpirationDate.destroy();
+      this._datePickerExpirationDate = null;
+    }
+  }
+
+
+  resetInput(pointData) {
+    this.updateData(PointEditor.parsePointDataToState(pointData));
   }
 
 
@@ -299,45 +313,6 @@ export default class PointEditor extends SmartView {
       });
     }
     evt.target.reportValidity();
-  }
-
-
-  _getPossibleCities() {
-    return this._destinations.map((destination) => destination.name);
-  }
-
-
-  _setDatePicker(datePicker, flag) {
-    if (datePicker) {
-      datePicker.destroy();
-      datePicker = null;
-    }
-
-    if (flag) {
-      datePicker = flatpickr(
-        this.getElement().querySelector('#event-start-time-1'),
-        {
-          dateFormat: 'd/m/y H:i',
-          defaultDate: this._pointState.dateFrom,
-          enableTime: FlagMode.TRUE,
-          time_24hr: FlagMode.TRUE,
-          onChange: this._onDateFromChange,
-        },
-      );
-      return;
-    }
-
-    datePicker  = flatpickr(
-      this.getElement().querySelector('#event-end-time-1'),
-      {
-        dateFormat: 'd/m/y H:i',
-        defaultDate: this._pointState.dateTo,
-        enableTime: FlagMode.TRUE,
-        time_24hr: FlagMode.TRUE,
-        minDate: dayjs(this._pointState.dateFrom).add(TIME_GAP, 'm').toDate(),
-        onChange: this._onDateToChange,
-      },
-    );
   }
 
 
@@ -400,5 +375,30 @@ export default class PointEditor extends SmartView {
       FlagMode.TRUE,
       );
     }
+  }
+
+
+  static parsePointDataToState(pointData) {
+    return Object.assign(
+      {},
+      pointData,
+      {
+        isSaving: FlagMode.FALSE,
+        isDeleting: FlagMode.FALSE,
+        isDisabled: FlagMode.FALSE,
+      },
+    );
+  }
+
+
+  static parseStateToPointData(state) {
+    state = Object.assign(
+      {},
+      state,
+    );
+    delete state.isSaving;
+    delete state.isDeleting;
+    delete state.isDisabled;
+    return state;
   }
 }

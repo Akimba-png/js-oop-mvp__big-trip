@@ -36,4 +36,3 @@ export default class Store {
     this._storage.setItem(this._storeKey, JSON.stringify(store));
   }
 }
-

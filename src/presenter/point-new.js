@@ -39,27 +39,6 @@ export default class PointNew {
   }
 
 
-  destroy() {
-    if (this._pointEditorComponent === null) {
-      return;
-    }
-    if (this._resumeNewButton !== null) {
-      this._resumeNewButton();
-    }
-    remove(this._pointEditorComponent);
-    this._pointEditorComponent = null;
-    document.removeEventListener('keydown', this._onEditorPointEscKeydown);
-  }
-
-
-  _onEditorPointEscKeydown(evt) {
-    if (isEscEvent(evt)) {
-      evt.preventDefault();
-      this.destroy();
-    }
-  }
-
-
   setSavingStatus() {
     this._pointEditorComponent.updateData(
       {
@@ -79,6 +58,27 @@ export default class PointNew {
       });
     };
     this._pointEditorComponent.shake(resetState);
+  }
+
+
+  destroy() {
+    if (this._pointEditorComponent === null) {
+      return;
+    }
+    if (this._resumeNewButton !== null) {
+      this._resumeNewButton();
+    }
+    remove(this._pointEditorComponent);
+    this._pointEditorComponent = null;
+    document.removeEventListener('keydown', this._onEditorPointEscKeydown);
+  }
+
+
+  _onEditorPointEscKeydown(evt) {
+    if (isEscEvent(evt)) {
+      evt.preventDefault();
+      this.destroy();
+    }
   }
 
 

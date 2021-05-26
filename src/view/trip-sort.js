@@ -38,11 +38,14 @@ export default class TripSort extends AbstractView {
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
   }
 
-
   getTemplate() {
     return createTripSortTemplate(this._currentSortType);
   }
 
+  setSortTypeChangeListener(callback) {
+    this._callback.sortTypeChange = callback;
+    this.getElement().addEventListener('click', this._onSortTypeChange);
+  }
 
   _onSortTypeChange(evt) {
     if (evt.target.tagName !== Tag.INPUT) {
@@ -50,11 +53,5 @@ export default class TripSort extends AbstractView {
     }
     evt.preventDefault();
     this._callback.sortTypeChange(evt.target.dataset.sortType);
-  }
-
-
-  setSortTypeChangeListener(callback) {
-    this._callback.sortTypeChange = callback;
-    this.getElement().addEventListener('click', this._onSortTypeChange);
   }
 }
