@@ -310,16 +310,16 @@ export default class Statistics extends AbstractView {
   _setCharts() {
     this._resetCharts();
     const uniqueTypes = getUniqueTypes(this._pointsData);
-    const moneyCtx = this.getElement().querySelector('.statistics__chart--money');
-    const typeCtx = this.getElement().querySelector('.statistics__chart--transport');
-    const timeCtx = this.getElement().querySelector('.statistics__chart--time');
+    const moneyCtxElement = this.getElement().querySelector('.statistics__chart--money');
+    const typeCtxElement = this.getElement().querySelector('.statistics__chart--transport');
+    const timeCtxElement = this.getElement().querySelector('.statistics__chart--time');
 
-    this._moneyChart = renderMoneyChart(moneyCtx, this._pointsData, uniqueTypes);
-    this._typeChart = renderTypeChart(typeCtx, this._pointsData, uniqueTypes);
-    this._timeChart = rendetTimeChart(timeCtx, this._pointsData, uniqueTypes);
+    this._moneyChart = renderMoneyChart(moneyCtxElement, this._pointsData, uniqueTypes);
+    this._typeChart = renderTypeChart(typeCtxElement, this._pointsData, uniqueTypes);
+    this._timeChart = rendetTimeChart(timeCtxElement, this._pointsData, uniqueTypes);
 
-    moneyCtx.height = BAR_HEIGHT * HEIGHT_MULTIPLIER;
-    typeCtx.height = BAR_HEIGHT * HEIGHT_MULTIPLIER;
-    timeCtx.height = BAR_HEIGHT * HEIGHT_MULTIPLIER;
+    moneyCtxElement.height = BAR_HEIGHT * HEIGHT_MULTIPLIER;
+    typeCtxElement.height = BAR_HEIGHT * HEIGHT_MULTIPLIER;
+    timeCtxElement.height = BAR_HEIGHT * HEIGHT_MULTIPLIER;
   }
 }

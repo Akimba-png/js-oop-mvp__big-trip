@@ -50,11 +50,11 @@ export default class MainMenu extends AbstractView {
 
 
   _changeActiveItem() {
-    const tableItem = this.getElement().querySelector(`[data-menu-item=${MenuItem.TABLE}]`);
-    const statsItem = this.getElement().querySelector(`[data-menu-item=${MenuItem.STATS}]`);
-    if (tableItem !== null && statsItem !== null) {
-      tableItem.classList.toggle('trip-tabs__btn--active');
-      statsItem.classList.toggle('trip-tabs__btn--active');
+    const tableItemElement = this.getElement().querySelector(`[data-menu-item=${MenuItem.TABLE}]`);
+    const statsItemElement = this.getElement().querySelector(`[data-menu-item=${MenuItem.STATS}]`);
+    if (tableItemElement !== null && statsItemElement !== null) {
+      tableItemElement.classList.toggle('trip-tabs__btn--active');
+      statsItemElement.classList.toggle('trip-tabs__btn--active');
     }
   }
 }
