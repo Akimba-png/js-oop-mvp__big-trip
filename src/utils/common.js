@@ -1,7 +1,9 @@
-export const getRandomInteger = (a = 0, b = 1) => {
+import {Index} from './../const.js';
+
+export const getRandomInteger = (a = 0, b = Index.NEXT) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
-  return Math.floor(Math.random() * (upper - lower + 1) + lower);
+  return Math.floor(Math.random() * (upper - lower + Index.NEXT) + lower);
 };
 
 

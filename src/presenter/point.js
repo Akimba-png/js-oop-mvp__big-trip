@@ -80,17 +80,6 @@ export default class Point {
   }
 
 
-  pickOffers(point, offers) {
-    pickElementDependOnValue(point, offers);
-  }
-
-
-  destroy() {
-    remove(this._pointComponent);
-    remove(this._pointEditorComponent);
-  }
-
-
   setViewFormState(state) {
     const resetState = () => {
       this._pointEditorComponent.updateData({
@@ -122,16 +111,19 @@ export default class Point {
   }
 
 
-  resetView() {
-    if (this._pointMode !== Mode.POINT) {
-      this._changeViewToPoint();
-    }
+  pickOffers(point, offers) {
+    pickElementDependOnValue(point, offers);
   }
 
 
-  _onEditorPointEscKeydown(evt) {
-    if (isEscEvent(evt)) {
-      evt.preventDefault();
+  destroy() {
+    remove(this._pointComponent);
+    remove(this._pointEditorComponent);
+  }
+
+
+  resetView() {
+    if (this._pointMode !== Mode.POINT) {
       this._changeViewToPoint();
     }
   }
@@ -154,6 +146,23 @@ export default class Point {
     document.addEventListener('keydown', this._onEditorPointEscKeydown);
     this._changeMode();
     this._pointMode = Mode.EDITOR;
+  }
+
+
+  _changeFavoriteStatus() {
+    this._changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.PATCH,
+      Object.assign({}, this._point, {isFavorite: !this._point.isFavorite}),
+    );
+  }
+
+
+  _onEditorPointEscKeydown(evt) {
+    if (isEscEvent(evt)) {
+      evt.preventDefault();
+      this._changeViewToPoint();
+    }
   }
 
 
@@ -184,15 +193,6 @@ export default class Point {
       UserAction.DELETE_POINT,
       UpdateType.MINOR,
       point,
-    );
-  }
-
-
-  _changeFavoriteStatus() {
-    this._changeData(
-      UserAction.UPDATE_POINT,
-      UpdateType.PATCH,
-      Object.assign({}, this._point, {isFavorite: !this._point.isFavorite}),
     );
   }
 }

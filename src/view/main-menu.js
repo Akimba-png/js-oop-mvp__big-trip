@@ -35,6 +35,16 @@ export default class MainMenu extends AbstractView {
   }
 
 
+  _changeActiveItem() {
+    const tableItemElement = this.getElement().querySelector(`[data-menu-item=${MenuItem.TABLE}]`);
+    const statsItemElement = this.getElement().querySelector(`[data-menu-item=${MenuItem.STATS}]`);
+    if (tableItemElement !== null && statsItemElement !== null) {
+      tableItemElement.classList.toggle('trip-tabs__btn--active');
+      statsItemElement.classList.toggle('trip-tabs__btn--active');
+    }
+  }
+
+
   _onMenuItemClick(evt) {
     evt.preventDefault();
     if (evt.target.tagName !== Tag.A) {
@@ -46,15 +56,5 @@ export default class MainMenu extends AbstractView {
     this._callback.menuItemClick(evt.target.dataset.menuItem);
     this._previousClickValue = evt.target.dataset.menuItem;
     this._changeActiveItem();
-  }
-
-
-  _changeActiveItem() {
-    const tableItemElement = this.getElement().querySelector(`[data-menu-item=${MenuItem.TABLE}]`);
-    const statsItemElement = this.getElement().querySelector(`[data-menu-item=${MenuItem.STATS}]`);
-    if (tableItemElement !== null && statsItemElement !== null) {
-      tableItemElement.classList.toggle('trip-tabs__btn--active');
-      statsItemElement.classList.toggle('trip-tabs__btn--active');
-    }
   }
 }

@@ -292,21 +292,6 @@ export default class Statistics extends AbstractView {
   }
 
 
-  _resetCharts() {
-    if (this._moneyChart !== null || this._typeChart !== null || this._timeChart !== null) {
-      this._moneyChart = null;
-      this._typeChart = null;
-      this._timeChart = null;
-    }
-  }
-
-
-  removeElement() {
-    super.removeElement();
-    this._resetCharts();
-  }
-
-
   _setCharts() {
     this._resetCharts();
     const uniqueTypes = getUniqueTypes(this._pointsData);
@@ -321,5 +306,20 @@ export default class Statistics extends AbstractView {
     moneyCtxElement.height = BAR_HEIGHT * HEIGHT_MULTIPLIER;
     typeCtxElement.height = BAR_HEIGHT * HEIGHT_MULTIPLIER;
     timeCtxElement.height = BAR_HEIGHT * HEIGHT_MULTIPLIER;
+  }
+
+
+  _resetCharts() {
+    if (this._moneyChart !== null || this._typeChart !== null || this._timeChart !== null) {
+      this._moneyChart = null;
+      this._typeChart = null;
+      this._timeChart = null;
+    }
+  }
+
+
+  removeElement() {
+    super.removeElement();
+    this._resetCharts();
   }
 }

@@ -1,18 +1,15 @@
 export const types = ['taxi', 'bus', 'train', 'ship', 'transport', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
-
 export const FlagMode = {
   TRUE: true,
   FALSE: false,
 };
-
 
 export const Tag = {
   INPUT: 'INPUT',
   A: 'A',
   BUTTON: 'BUTTON',
 };
-
 
 export const DateFormat = {
   DAY_MONTH: 'D MMM',
@@ -48,12 +45,10 @@ export const FilterType = {
   PAST: 'past',
 };
 
-
 export const Index = {
   PREVIOUS: -1,
   NEXT: 1,
 };
-
 
 export const MenuItem = {
   TABLE: 'table',
