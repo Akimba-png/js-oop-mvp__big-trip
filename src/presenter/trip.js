@@ -169,7 +169,7 @@ export default class Trip {
       this._resumeNewButton();
     }
     const points = this._getPoints();
-    if (points.length === 0) {
+    if (!points.length) {
       this._renderListEmpty();
       return;
     }

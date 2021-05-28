@@ -2,7 +2,7 @@ import SmartView from './smart.js';
 import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
-import {types, DateFormat, FlagMode, Index, Tag} from '../const.js';
+import {TYPES, DateFormat, FlagMode, Index, Tag} from '../const.js';
 import {getRandomArrayElement, isOnline} from '../utils/common.js';
 import {humanizeDate, pickElementDependOnValue, compareTwoDates} from '../utils/point.js';
 
@@ -14,7 +14,7 @@ const ValidityMessage = {
 };
 
 const EMPTY_POINT = {
-  type: getRandomArrayElement(types),
+  type: getRandomArrayElement(TYPES),
   offers: [],
   destination: {
     name: '',
@@ -101,7 +101,7 @@ const createPointEditorTemplate = (pointData, allTypeOffers, cities, pointMode) 
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
-                ${createEventTypeItemTemplate(types, type)}
+                ${createEventTypeItemTemplate(TYPES, type)}
             </fieldset>
           </div>
         </div>
@@ -225,7 +225,7 @@ export default class PointEditor extends SmartView {
           dateFormat: 'd/m/y H:i',
           defaultDate: this._pointState.dateFrom,
           enableTime: FlagMode.TRUE,
-          time_24hr: FlagMode.TRUE,
+          'time_24hr': FlagMode.TRUE,
           onChange: this._onDateFromChange,
         },
       );
@@ -238,7 +238,7 @@ export default class PointEditor extends SmartView {
         dateFormat: 'd/m/y H:i',
         defaultDate: this._pointState.dateTo,
         enableTime: FlagMode.TRUE,
-        time_24hr: FlagMode.TRUE,
+        'time_24hr': FlagMode.TRUE,
         minDate: dayjs(this._pointState.dateFrom).add(TIME_GAP, 'm').toDate(),
         onChange: this._onDateToChange,
       },

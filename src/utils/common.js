@@ -8,7 +8,7 @@ export const getRandomInteger = (a = 0, b = Index.NEXT) => {
 
 
 export const getRandomArrayElement = (array) => {
-  return array[(getRandomInteger(0, (array.length - 1)))];
+  return array[(getRandomInteger(0, (array.length - Index.NEXT)))];
 };
 
 

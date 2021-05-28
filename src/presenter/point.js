@@ -4,7 +4,6 @@ import {render, replace, remove} from './../utils/render.js';
 import {isEscEvent, isOnline} from './../utils/common.js';
 import {isDateTheSame, isOffersTheSame} from './../utils/point.js';
 import {UserAction, UpdateType, FlagMode} from './../const.js';
-import {pickElementDependOnValue} from '../utils/point.js';
 import {toast} from './../utils/toast.js';
 
 const EDIT_MODE = 'edit_mode';
@@ -108,11 +107,6 @@ export default class Point {
       default:
         throw new Error('Unknown form-state. Check FormState value');
     }
-  }
-
-
-  pickOffers(point, offers) {
-    pickElementDependOnValue(point, offers);
   }
 
 
