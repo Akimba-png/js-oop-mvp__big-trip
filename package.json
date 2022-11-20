@@ -1,8 +1,8 @@
 {
   "name": "big-trip",
   "version": "1.0.0",
-  "private": true,
-  "description": "Проект «Большое путешествие» от HTML Academy",
+  "private": false,
+  "description": "Объектно-ориентированное программирование. Проект Big-trip",
   "scripts": {
     "build": "webpack --mode development",
     "eslint": "eslint src/",
